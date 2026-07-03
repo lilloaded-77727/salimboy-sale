@@ -1,13 +1,8 @@
 ﻿// ===== SUPABASE.JS - SALIMBOY SALE SUPABASE ULASH =====
 
-// ===== ENV DAN MA'LUMOTLARNI OLISH =====
-var SUPABASE_URL = window.ENV ? window.ENV.SUPABASE_URL : 'https://urlaiwcfxzptvmewnjqb.supabase.co';
-var SUPABASE_ANON_KEY = window.ENV ? window.ENV.SUPABASE_ANON_KEY : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVybGFpd2NmeHpwdHZtZXduanFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMDA0MDgsImV4cCI6MjA5ODY3NjQwOH0.5zWd7os1pMlJ97Dp5uEHMVun5oIxbG6ZGsicIPEhGpw';
-
 var supabaseClient = null;
 var isSupabaseReady = false;
 
-// ===== SUPABASE NI YUKLASH =====
 function loadSupabase() {
     return new Promise(function(resolve, reject) {
         try {
@@ -16,11 +11,14 @@ function loadSupabase() {
                 return;
             }
 
+            var url = window.ENV ? window.ENV.SUPABASE_URL : 'https://urlaiwcfxzptvmewnjqb.supabase.co';
+            var key = window.ENV ? window.ENV.SUPABASE_ANON_KEY : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVybGFpd2NmeHpwdHZtZXduanFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMDA0MDgsImV4cCI6MjA5ODY3NjQwOH0.5zWd7os1pMlJ97Dp5uEHMVun5oIxbG6ZGsicIPEhGpw';
+
             if (typeof supabase === 'undefined') {
                 var script = document.createElement('script');
                 script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
                 script.onload = function() {
-                    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    supabaseClient = supabase.createClient(url, key);
                     isSupabaseReady = true;
                     console.log('✅ Supabase ulandi!');
                     resolve(supabaseClient);
@@ -30,7 +28,7 @@ function loadSupabase() {
                 };
                 document.head.appendChild(script);
             } else {
-                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                supabaseClient = supabase.createClient(url, key);
                 isSupabaseReady = true;
                 console.log('✅ Supabase ulandi!');
                 resolve(supabaseClient);
@@ -41,7 +39,6 @@ function loadSupabase() {
     });
 }
 
-// ===== TEST ULASH =====
 function testSupabaseConnection() {
     return loadSupabase().then(function(client) {
         return client.from('products').select('count', { count: 'exact', head: true });

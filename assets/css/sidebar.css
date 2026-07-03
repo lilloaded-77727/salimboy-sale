@@ -1,4 +1,4 @@
-/* ===== SIDEBAR - SALIMBOY SALE ===== */
+﻿/* ===== SIDEBAR ===== */
 .sidebar {
     width: 280px;
     height: 100vh;
@@ -12,12 +12,12 @@
     padding: 24px 16px;
     display: flex;
     flex-direction: column;
-    transition: var(--transition);
+    transition: all 0.3s ease;
     z-index: 999;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
-/* Brand - Salimboy */
 .sidebar-brand {
     display: flex;
     align-items: center;
@@ -59,7 +59,9 @@
     text-transform: uppercase;
 }
 
-/* Menu items */
+.sidebar-menu {
+    flex: 1;
+}
 .sidebar-menu ul {
     list-style: none;
 }
@@ -107,7 +109,6 @@
     color: var(--danger);
 }
 
-/* User Card - Salimboy */
 .sidebar-footer {
     margin-top: auto;
     padding-top: 16px;
@@ -146,4 +147,18 @@
 .user-card i {
     color: var(--text-muted);
     font-size: 16px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+        position: fixed;
+        z-index: 1000;
+        height: 100vh;
+    }
+    .sidebar.open {
+        transform: translateX(0);
+    }
 }
