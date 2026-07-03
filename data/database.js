@@ -1,6 +1,5 @@
-// ===== DATABASE.JS - SUPABASE BILAN ISHLASH =====
+// ===== DATABASE.JS - SUPABASE AVTOMAT SAQLASH =====
 
-// ===== MA'LUMOTLAR BAZASI =====
 var DB = {
     products: [],
     sales: [],
@@ -17,26 +16,34 @@ var DB = {
     }
 };
 
-// ===== SUPABASE GA SAQLASH =====
+// ===== SUPABASE GA AVTOMAT SAQLASH =====
 function saveToSupabase(table, data) {
     return new Promise(function(resolve, reject) {
-        if (typeof SupabaseAPI === 'undefined') {
-            // Supabase yo'q bo'lsa LocalStorage ga saqlash
+        if (typeof SupabaseAPI === 'undefined' || !SupabaseAPI) {
             saveToLocalStorage();
             resolve();
             return;
         }
         
         SupabaseAPI.loadSupabase().then(function() {
-            var method = SupabaseAPI['add' + table.charAt(0).toUpperCase() + table.slice(1)];
+            var method = null;
+            var tableName = table.charAt(0).toUpperCase() + table.slice(1);
+            
+            // Metodni aniqlash
+            if (table === 'Product') method = SupabaseAPI.addProduct;
+            else if (table === 'Sale') method = SupabaseAPI.addSale;
+            else if (table === 'Debtor') method = SupabaseAPI.addDebtor;
+            else if (table === 'Expense') method = SupabaseAPI.addExpense;
+            else if (table === 'Employee') method = SupabaseAPI.addEmployee;
+            else if (table === 'Shift') method = SupabaseAPI.openShift;
+            
             if (method) {
                 method(data).then(function(result) {
-                    if (result.error) {
-                        console.log('⚠️ Supabase xatolik:', result.error);
-                        // Xatolik bo'lsa LocalStorage ga saqlash
+                    if (result && result.error) {
+                        console.log('⚠️ Supabase xatolik:', result.error.message);
                         saveToLocalStorage();
                     } else {
-                        console.log('✅ Supabase ga saqlandi:', table);
+                        console.log('✅ Supabase ga saqlandi:', table, data.name || data.id);
                     }
                     resolve();
                 }).catch(function(e) {
@@ -83,7 +90,7 @@ function loadFromLocalStorage() {
 // ===== SUPABASE DAN YUKLASH =====
 function loadFromSupabase() {
     return new Promise(function(resolve, reject) {
-        if (typeof SupabaseAPI === 'undefined') {
+        if (typeof SupabaseAPI === 'undefined' || !SupabaseAPI) {
             loadFromLocalStorage();
             resolve();
             return;
@@ -95,7 +102,9 @@ function loadFromSupabase() {
             
             for (var i = 0; i < tables.length; i++) {
                 var table = tables[i];
-                var method = SupabaseAPI['get' + table.charAt(0).toUpperCase() + table.slice(1)];
+                var methodName = 'get' + table.charAt(0).toUpperCase() + table.slice(1);
+                var method = SupabaseAPI[methodName];
+                
                 if (method) {
                     promises.push(method().then(function(result) {
                         if (!result.error && result.data) {
@@ -107,6 +116,7 @@ function loadFromSupabase() {
             }
             
             Promise.all(promises).then(function() {
+                saveToLocalStorage();
                 resolve();
             }).catch(function() {
                 loadFromLocalStorage();
@@ -128,8 +138,8 @@ function addProduct(product) {
     DB.products.push(product);
     saveToLocalStorage();
     
-    // Supabase ga qo'shish
-    saveToSupabase('Product', {
+    // Supabase ga avtomat qo'shish
+    var supabaseProduct = {
         id: product.id,
         name: product.name,
         barcode: product.barcode || '',
@@ -140,8 +150,9 @@ function addProduct(product) {
         image: product.image || '',
         category: product.category || 'Umumiy',
         created_at: product.createdAt
-    });
+    };
     
+    saveToSupabase('Product', supabaseProduct);
     return product;
 }
 
@@ -150,12 +161,10 @@ function addSale(sale) {
     sale.id = sale.id || Date.now() + Math.floor(Math.random() * 1000);
     sale.date = sale.date || new Date().toISOString();
     
-    // LocalStorage ga qo'shish
     DB.sales.push(sale);
     saveToLocalStorage();
     
-    // Supabase ga qo'shish
-    saveToSupabase('Sale', {
+    var supabaseSale = {
         id: sale.id,
         cashier: sale.cashier || 'Noma\'lum',
         items: sale.items || [],
@@ -167,8 +176,9 @@ function addSale(sale) {
         discount: sale.discount || 0,
         discount_percent: sale.discountPercent || 0,
         shift_id: sale.shiftId || null
-    });
+    };
     
+    saveToSupabase('Sale', supabaseSale);
     return sale;
 }
 
@@ -180,7 +190,7 @@ function addDebtor(debtor) {
     DB.debtors.push(debtor);
     saveToLocalStorage();
     
-    saveToSupabase('Debtor', {
+    var supabaseDebtor = {
         id: debtor.id,
         name: debtor.name,
         phone: debtor.phone,
@@ -189,8 +199,9 @@ function addDebtor(debtor) {
         date: debtor.date,
         status: debtor.status || 'pending',
         paid_date: debtor.paidDate || null
-    });
+    };
     
+    saveToSupabase('Debtor', supabaseDebtor);
     return debtor;
 }
 
@@ -202,15 +213,16 @@ function addExpense(expense) {
     DB.expenses.push(expense);
     saveToLocalStorage();
     
-    saveToSupabase('Expense', {
+    var supabaseExpense = {
         id: expense.id,
         description: expense.description,
         amount: expense.amount,
         category: expense.category,
         payment_type: expense.paymentType || 'cash',
         date: expense.date
-    });
+    };
     
+    saveToSupabase('Expense', supabaseExpense);
     return expense;
 }
 
@@ -222,7 +234,7 @@ function addEmployee(employee) {
     DB.employees.push(employee);
     saveToLocalStorage();
     
-    saveToSupabase('Employee', {
+    var supabaseEmployee = {
         id: employee.id,
         name: employee.name,
         position: employee.position,
@@ -232,8 +244,9 @@ function addEmployee(employee) {
         code: employee.code || '',
         hire_date: employee.hireDate,
         active: employee.active !== undefined ? employee.active : true
-    });
+    };
     
+    saveToSupabase('Employee', supabaseEmployee);
     return employee;
 }
 
@@ -246,7 +259,7 @@ function openShift(shift) {
     DB.shifts.push(shift);
     saveToLocalStorage();
     
-    saveToSupabase('Shift', {
+    var supabaseShift = {
         id: shift.id,
         cashier: shift.cashier,
         start_time: shift.startTime,
@@ -255,14 +268,14 @@ function openShift(shift) {
         end_cash: 0,
         total_sales: 0,
         status: 'open'
-    });
+    };
     
+    saveToSupabase('Shift', supabaseShift);
     return shift;
 }
 
 // ===== YUKLASH =====
 if (!loadFromLocalStorage()) {
-    // Agar LocalStorage bo'sh bo'lsa, Supabase dan yuklash
     loadFromSupabase().then(function() {
         console.log('✅ Ma\'lumotlar yuklandi!');
     });
