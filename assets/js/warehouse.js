@@ -1,7 +1,7 @@
-// ===== WAREHOUSE.JS - TO'LIQ OMBOR LOGIKASI (RASM BASE64) =====
+// ===== WAREHOUSE.JS - TO'LIQ OMBOR LOGIKASI (SUPABASE AVTOMAT) =====
 
 var editingProductId = null;
-var uploadedImageData = null; // Yuklangan rasmni saqlash uchun
+var uploadedImageData = null;
 
 // ===== DOM READY =====
 document.addEventListener('DOMContentLoaded', function() {
@@ -17,8 +17,16 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        loadProducts();
-        loadWarehouseStats();
+        // Supabase dan yuklash
+        if (typeof loadFromSupabase === 'function') {
+            loadFromSupabase().then(function() {
+                loadProducts();
+                loadWarehouseStats();
+            });
+        } else {
+            loadProducts();
+            loadWarehouseStats();
+        }
 
         var prodPurchase = document.getElementById('prodPurchase');
         var prodSale = document.getElementById('prodSale');
@@ -50,7 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
             prodImage.addEventListener('change', function(e) {
                 var file = e.target.files[0];
                 if (file) {
-                    // Rasm hajmini tekshirish (1MB dan kichik bo'lishi kerak)
                     if (file.size > 1024 * 1024) {
                         showNotification('⚠️ Rasm hajmi 1MB dan kichik bo\'lishi kerak!', 'warning');
                         this.value = '';
@@ -59,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     var reader = new FileReader();
                     reader.onload = function(event) {
-                        uploadedImageData = event.target.result; // Base64 formatda saqlash
+                        uploadedImageData = event.target.result;
                         var preview = document.getElementById('imagePreview');
                         if (preview) {
                             preview.innerHTML = '<img src="' + uploadedImageData + '" alt="Rasm" style="max-width:100px;max-height:100px;border-radius:8px;border:1px solid #EAEAEA;padding:4px;object-fit:cover;" />';
@@ -128,15 +135,20 @@ function loadProducts(filter) {
         var tbody = document.getElementById('productsTableBody');
         if (!tbody) return;
 
-        if (typeof DB === 'undefined' || !DB || !DB.products || DB.products.length === 0) {
+        var products = [];
+        
+        // DB dan olish
+        if (typeof DB !== 'undefined' && DB && DB.products) {
+            products = DB.products.slice();
+        }
+        
+        if (products.length === 0) {
             tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:30px;color:#999;"><i class="fas fa-box-open" style="font-size:24px;display:block;margin-bottom:8px;"></i>Mahsulotlar mavjud emas</td></tr>';
             var countEl = document.getElementById('productCount');
             if (countEl) countEl.textContent = '0 ta';
             updateWarehouseStats([]);
             return;
         }
-
-        var products = DB.products.slice();
         
         if (filter) {
             var search = filter.toLowerCase().trim();
@@ -179,7 +191,6 @@ function loadProducts(filter) {
             var profitClass = profit >= 0 ? 'profit-positive' : 'profit-negative';
             var profitPercent = p.purchasePrice > 0 ? ((profit / p.purchasePrice) * 100).toFixed(1) : '0';
             
-            // RASMNI TEKSHIRISH - base64 yoki URL
             var imgSrc = p.image;
             if (!imgSrc) {
                 imgSrc = 'https://picsum.photos/seed/default/36/36';
@@ -258,7 +269,7 @@ function searchWarehouse() {
 
 // ===== MAHSULOT QO'SHISH MODAL =====
 function openAddProductModal() {
-    uploadedImageData = null; // Eski rasmni tozalash
+    uploadedImageData = null;
     var modal = document.getElementById('addProductModal');
     if (modal) {
         modal.classList.add('active');
@@ -287,7 +298,7 @@ function closeAddProductModal() {
     uploadedImageData = null;
 }
 
-// ===== MAHSULOT QO'SHISH (BASE64 RASM BILAN) =====
+// ===== MAHSULOT QO'SHISH (AVTOMAT SUPABASE) =====
 function addProduct() {
     try {
         var name = document.getElementById('prodName').value.trim();
@@ -308,24 +319,10 @@ function addProduct() {
             return;
         }
 
-        // ===== RASMNI OLISH (YUKLANGAN BASE64 YOKI DEFAULT) =====
+        // ===== RASMNI OLISH =====
         var imageData = uploadedImageData;
         if (!imageData) {
-            // Rasm yuklanmagan bo'lsa default rasm
             imageData = 'https://picsum.photos/seed/' + Date.now() + '/300/300';
-        }
-        
-        var code = null;
-        if (unit === 'kg') {
-            var kgProducts = [];
-            if (typeof DB !== 'undefined' && DB && DB.products) {
-                for (var i = 0; i < DB.products.length; i++) {
-                    if (DB.products[i].unit === 'kg') {
-                        kgProducts.push(DB.products[i]);
-                    }
-                }
-            }
-            code = kgProducts.length + 1;
         }
 
         var newProduct = {
@@ -337,25 +334,54 @@ function addProduct() {
             profit: salePrice - purchasePrice,
             stock: stock,
             unit: unit,
-            image: imageData, // Base64 yoki URL
+            image: imageData,
             weight: weight,
-            code: code,
             category: 'Umumiy',
             createdAt: new Date().toISOString()
         };
 
-        if (typeof DB === 'undefined' || !DB) {
-            showNotification('⚠️ Ma\'lumotlar bazasi topilmadi!', 'error');
-            return;
+        // ===== 1. LOCALSTORAGE GA SAQLASH =====
+        if (typeof DB !== 'undefined' && DB) {
+            if (!DB.products) DB.products = [];
+            DB.products.push(newProduct);
+            if (typeof saveDB === 'function') saveDB();
         }
-        if (!DB.products) DB.products = [];
-        DB.products.push(newProduct);
-        saveDB();
-        
-        uploadedImageData = null; // Tozalash
+
+        // ===== 2. SUPABASE GA AVTOMAT SAQLASH =====
+        if (typeof window.addProduct === 'function') {
+            window.addProduct(newProduct);
+            console.log('✅ Mahsulot Supabase ga avtomat saqlandi:', name);
+        } else {
+            // Supabase API orqali saqlash
+            if (typeof SupabaseAPI !== 'undefined') {
+                SupabaseAPI.loadSupabase().then(function() {
+                    var supabaseProduct = {
+                        id: newProduct.id,
+                        name: newProduct.name,
+                        barcode: newProduct.barcode || '',
+                        purchase_price: newProduct.purchasePrice,
+                        sale_price: newProduct.salePrice,
+                        stock: newProduct.stock,
+                        unit: newProduct.unit || 'dona',
+                        image: newProduct.image || '',
+                        category: newProduct.category || 'Umumiy',
+                        created_at: newProduct.createdAt
+                    };
+                    SupabaseAPI.addProduct(supabaseProduct).then(function(result) {
+                        if (result.error) {
+                            console.log('⚠️ Supabase xatolik:', result.error);
+                        } else {
+                            console.log('✅ Supabase ga saqlandi:', name);
+                        }
+                    });
+                });
+            }
+        }
+
+        uploadedImageData = null;
         closeAddProductModal();
         loadProducts();
-        showNotification('✅ "' + name + '" mahsuloti qo\'shildi!', 'success');
+        showNotification('✅ "' + name + '" mahsuloti qo\'shildi! (LocalStorage + Supabase)', 'success');
     } catch(e) {
         console.log('Mahsulot qo\'shishda xatolik:', e);
         showNotification('⚠️ Xatolik yuz berdi!', 'error');
@@ -467,7 +493,7 @@ function updateProduct() {
         DB.products[index].unit = unit;
         DB.products[index].stock = stock;
 
-        saveDB();
+        if (typeof saveDB === 'function') saveDB();
         closeEditProductModal();
         loadProducts();
         showNotification('✅ "' + name + '" yangilandi!', 'success');
@@ -507,7 +533,7 @@ function confirmDeleteProduct(id) {
 
         if (confirm('"' + product.name + '" mahsulotini o\'chirishga ishonchingiz komilmi?')) {
             DB.products.splice(productIndex, 1);
-            saveDB();
+            if (typeof saveDB === 'function') saveDB();
             loadProducts();
             loadWarehouseStats();
             showNotification('🗑️ "' + product.name + '" o\'chirildi!', 'info');
@@ -544,7 +570,7 @@ function saveDB() {
     try {
         if (typeof localStorage !== 'undefined') {
             localStorage.setItem('salimboy_db', JSON.stringify(DB));
-            console.log('✅ Ma\'lumotlar saqlandi!');
+            console.log('💾 LocalStorage ga saqlandi!');
         }
     } catch(e) {
         console.log('Ma\'lumotlar saqlanmadi:', e);
@@ -591,4 +617,4 @@ function showNotification(message, type) {
     }, 4000);
 }
 
-console.log('✅ Warehouse.js to\'liq yuklandi!');
+console.log('✅ Warehouse.js to\'liq yuklandi! (Supabase avtomat)');
