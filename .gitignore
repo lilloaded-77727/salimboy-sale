@@ -1,0 +1,30 @@
+﻿# Node modules
+node_modules/
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Backup files
+*.bak
+*.tmp
+
+# Log files
+*.log
+
+# Local storage (agar mavjud bo'lsa)
+*.local
+*.db
+
+# Environment files
+.env
+.env.local
+
+# Python cache
+__pycache__/
+*.pyc
