@@ -1,4 +1,4 @@
-// ===== WAREHOUSE.JS - TO'LIQ OMBOR LOGIKASI (SUPABASE AVTOMAT) =====
+// ===== WAREHOUSE.JS - TO'LIQ OMBOR LOGIKASI (SUPABASE AVTOMAT + SINXRONLASH) =====
 
 var editingProductId = null;
 var uploadedImageData = null;
@@ -22,10 +22,12 @@ document.addEventListener('DOMContentLoaded', function() {
             loadFromSupabase().then(function() {
                 loadProducts();
                 loadWarehouseStats();
+                addSyncButton();
             });
         } else {
             loadProducts();
             loadWarehouseStats();
+            addSyncButton();
         }
 
         var prodPurchase = document.getElementById('prodPurchase');
@@ -91,6 +93,96 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Warehouse.js yuklashda xatolik:', e);
     }
 });
+
+// ===== SINXRONLASH TUGMASI =====
+function addSyncButton() {
+    try {
+        var header = document.querySelector('.warehouse-header .header-right');
+        if (header) {
+            // Tugma mavjudligini tekshirish
+            var existingBtn = document.querySelector('.btn-sync');
+            if (existingBtn) return;
+            
+            var btn = document.createElement('button');
+            btn.className = 'btn-sync';
+            btn.innerHTML = '<i class="fas fa-sync"></i> Sinxronlash';
+            btn.onclick = syncFromSupabase;
+            btn.style.cssText = 'padding:8px 16px;background:#6C63FF;color:#fff;border:none;border-radius:50px;font-weight:600;cursor:pointer;margin-right:10px;transition:all 0.3s ease;';
+            btn.onmouseover = function() { this.style.transform = 'scale(1.05)'; };
+            btn.onmouseout = function() { this.style.transform = 'scale(1)'; };
+            header.prepend(btn);
+            console.log('✅ Sinxronlash tugmasi qo\'shildi!');
+        }
+    } catch(e) {
+        console.log('Tugma qo\'shishda xatolik:', e);
+    }
+}
+
+// ===== SUPABASE DAN MA'LUMOTLARNI SINXRONLASH =====
+function syncFromSupabase() {
+    if (typeof SupabaseAPI === 'undefined') {
+        showNotification('⚠️ Supabase ulanishi mavjud emas!', 'warning');
+        return;
+    }
+    
+    showNotification('🔄 Sinxronizatsiya boshlandi...', 'info');
+    
+    SupabaseAPI.loadSupabase().then(function() {
+        return SupabaseAPI.getProducts();
+    }).then(function(result) {
+        console.log('📦 Supabase dagi mahsulotlar:', result.data);
+        
+        if (result.error) {
+            showNotification('⚠️ Xatolik: ' + result.error.message, 'error');
+            return;
+        }
+        
+        if (result.data && result.data.length > 0) {
+            // LocalStorage ni yangilash
+            var DB = {};
+            try {
+                DB = JSON.parse(localStorage.getItem('salimboy_db')) || {};
+            } catch(e) {
+                DB = {};
+            }
+            
+            // Mahsulotlarni formatlash
+            var products = result.data.map(function(item) {
+                return {
+                    id: item.id,
+                    name: item.name,
+                    barcode: item.barcode || '',
+                    purchasePrice: item.purchase_price || 0,
+                    salePrice: item.sale_price || 0,
+                    profit: (item.sale_price || 0) - (item.purchase_price || 0),
+                    stock: item.stock || 0,
+                    unit: item.unit || 'dona',
+                    image: item.image || '',
+                    category: item.category || 'Umumiy',
+                    createdAt: item.created_at || new Date().toISOString()
+                };
+            });
+            
+            DB.products = products;
+            localStorage.setItem('salimboy_db', JSON.stringify(DB));
+            
+            // DB ni yangilash
+            if (typeof DB !== 'undefined') {
+                DB.products = products;
+            }
+            
+            showNotification('✅ ' + products.length + ' ta mahsulot yangilandi!', 'success');
+            setTimeout(function() {
+                location.reload();
+            }, 1000);
+        } else {
+            showNotification('⚠️ Supabase da mahsulot yo\'q!', 'warning');
+        }
+    }).catch(function(e) {
+        console.log('Xatolik:', e);
+        showNotification('❌ Xatolik: ' + e.message, 'error');
+    });
+}
 
 // ===== FOYDANI HISOBLASH =====
 function calculateProfit() {
@@ -208,7 +300,7 @@ function loadProducts(filter) {
                 '<td>' + (p.unit || 'dona') + '</td>' +
                 '<td><div class="action-btns">' +
                     '<button class="btn-edit" onclick="editProduct(' + p.id + ')" style="padding:4px 10px;border:none;border-radius:6px;cursor:pointer;font-size:12px;background:rgba(52,152,219,0.12);color:#3498DB;transition:all 0.3s;"><i class="fas fa-edit"></i></button>' +
-                    '<button class="btn-delete" onclick="confirmDeleteProduct(' + p.id + ')" style="padding:4px 10px;border:none;border-radius:6px;cursor:pointer;font-size:12px;background:rgba(231,76,60,0.12);color:#E74C3C;transition:all 0.3s;"><i class="fas fa-trash"></i></button>' +
+                    '<button class="btn-delete" onclick="confirmDeleteProduct(${p.id})" style="padding:4px 10px;border:none;border-radius:6px;cursor:pointer;font-size:12px;background:rgba(231,76,60,0.12);color:#E74C3C;transition:all 0.3s;"><i class="fas fa-trash"></i></button>' +
                 '</div></td>' +
             '</tr>';
         }
@@ -617,4 +709,4 @@ function showNotification(message, type) {
     }, 4000);
 }
 
-console.log('✅ Warehouse.js to\'liq yuklandi! (Supabase avtomat)');
+console.log('✅ Warehouse.js to\'liq yuklandi! (Supabase avtomat + Sinxronlash)');
