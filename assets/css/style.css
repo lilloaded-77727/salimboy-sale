@@ -220,3 +220,219 @@ body {
         width: 100%;
     }
 }
+
+/* ===== THEME VARIABLES ===== */
+:root {
+    --bg-primary: #0F0F1A;
+    --bg-secondary: #1A1A2E;
+    --bg-card: #1A1A2E;
+    --bg-card-hover: #252540;
+    --text-primary: #FFFFFF;
+    --text-secondary: #A0A0B8;
+    --text-muted: #6C6C8A;
+    --border-color: #2A2A44;
+    --shadow-color: rgba(0, 0, 0, 0.4);
+    --bg-input: rgba(255, 255, 255, 0.05);
+    --bg-table-hover: rgba(108, 99, 255, 0.04);
+}
+
+body.light-theme {
+    --bg-primary: #F0F2F5;
+    --bg-secondary: #FFFFFF;
+    --bg-card: #FFFFFF;
+    --bg-card-hover: #F5F6FA;
+    --text-primary: #1A1A2E;
+    --text-secondary: #555;
+    --text-muted: #888;
+    --border-color: #EAEAEA;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+    --bg-input: #F5F5F7;
+    --bg-table-hover: rgba(108, 99, 255, 0.04);
+}
+
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.main-content {
+    background: var(--bg-primary);
+    transition: background 0.3s ease;
+}
+
+.stat-card, .chart-card, .table-card, .settings-card {
+    background: var(--bg-card);
+    border-color: var(--border-color);
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.sidebar {
+    background: rgba(15, 15, 26, 0.95);
+    backdrop-filter: blur(30px);
+    border-right: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+body.light-theme .sidebar {
+    background: rgba(255, 255, 255, 0.95);
+    border-right: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+body.light-theme .sidebar .brand-name {
+    background: linear-gradient(135deg, #1A1A2E, #555);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+body.light-theme .sidebar .sidebar-menu ul li a {
+    color: #555;
+}
+
+body.light-theme .sidebar .sidebar-menu ul li a:hover {
+    background: rgba(108, 99, 255, 0.08);
+    color: #1A1A2E;
+}
+
+body.light-theme .sidebar .sidebar-menu ul li a.active {
+    color: var(--primary);
+}
+
+body.light-theme .sidebar .user-name {
+    color: #1A1A2E;
+}
+
+body.light-theme .sidebar .brand-sub {
+    color: #888;
+}
+
+.top-header {
+    background: var(--bg-card);
+    border-color: var(--border-color);
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+body.light-theme .top-header {
+    background: #FFFFFF;
+    border-color: #EAEAEA;
+}
+
+body.light-theme .header-search {
+    background: #F5F5F7;
+    border-color: #EAEAEA;
+}
+
+body.light-theme .header-search input {
+    color: #1A1A2E;
+}
+
+body.light-theme .header-search input::placeholder {
+    color: #999;
+}
+
+body.light-theme .icon-btn {
+    background: #F5F5F7;
+    color: #555;
+}
+
+body.light-theme .header-date {
+    background: #F5F5F7;
+    color: #555;
+}
+
+body.light-theme table th {
+    color: #888;
+    border-color: #EAEAEA;
+}
+
+body.light-theme table td {
+    color: #555;
+    border-color: #F5F5F7;
+}
+
+body.light-theme table tbody tr:hover td {
+    background: var(--bg-table-hover);
+}
+
+body.light-theme .form-control {
+    background: #FAFAFA;
+    border-color: #DDD;
+    color: #1A1A2E;
+}
+
+body.light-theme .form-control:focus {
+    background: #FFFFFF;
+    border-color: var(--primary);
+}
+
+body.light-theme .modal-content {
+    background: #FFFFFF;
+}
+
+body.light-theme .modal-header {
+    border-color: #EAEAEA;
+}
+
+body.light-theme .modal-header h3 {
+    color: #1A1A2E;
+}
+
+body.light-theme .custom-notification {
+    background: #FFFFFF;
+    color: #1A1A2E;
+    border-color: #EAEAEA;
+}
+
+body.light-theme .btn-outline {
+    color: #555;
+    border-color: #DDD;
+}
+
+body.light-theme .btn-outline:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+body.light-theme .welcome-banner {
+    background: linear-gradient(135deg, rgba(108, 99, 255, 0.08), rgba(108, 99, 255, 0.02));
+    border-color: rgba(108, 99, 255, 0.15);
+}
+
+body.light-theme .welcome-text h1 {
+    color: #1A1A2E;
+}
+
+body.light-theme .welcome-text p {
+    color: #666;
+}
+
+body.light-theme .stat-number {
+    color: #1A1A2E;
+}
+
+body.light-theme .stat-info h3 {
+    color: #888;
+}
+
+body.light-theme .chart-header h3 {
+    color: #1A1A2E;
+}
+
+body.light-theme .chart-header select {
+    background: #F5F5F7;
+    border-color: #EAEAEA;
+    color: #555;
+}
+
+body.light-theme .quick-action-card {
+    background: #FFFFFF;
+    border-color: #EAEAEA;
+}
+
+body.light-theme .quick-action-card .qa-info h4 {
+    color: #1A1A2E;
+}
+
+body.light-theme .quick-action-card .qa-info p {
+    color: #888;
+}
