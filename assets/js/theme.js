@@ -1,71 +1,38 @@
-﻿// ===== THEME.JS - DARK/LIGHT REJIM =====
+﻿// ===== THEME.JS - GRAFIKA YANGILASH =====
 
-function loadTheme() {
-    try {
-        var theme = localStorage.getItem('salimboy_theme') || 'dark';
-        var body = document.body;
-        if (theme === 'light') {
-            body.classList.add('light-theme');
-        } else {
-            body.classList.remove('light-theme');
-        }
-        var icon = document.querySelector('#themeToggle i');
-        if (icon) {
-            icon.className = theme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
-        }
-        console.log('✅ Tema:', theme);
-    } catch(e) {}
-}
-
-function toggleTheme() {
-    try {
-        var body = document.body;
-        var isLight = body.classList.contains('light-theme');
-        var newTheme = isLight ? 'dark' : 'light';
-        
-        if (newTheme === 'light') {
-            body.classList.add('light-theme');
-        } else {
-            body.classList.remove('light-theme');
-        }
-        
-        localStorage.setItem('salimboy_theme', newTheme);
-        
-        var icon = document.querySelector('#themeToggle i');
-        if (icon) {
-            icon.className = newTheme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
-        }
-        console.log('🌓 Tema:', newTheme);
-        
-        // Grafiklarni yangilash
-        if (typeof updateChartsTheme === 'function') {
-            updateChartsTheme(newTheme);
-        }
-    } catch(e) {}
-}
-
+// ===== GRAFIKALARNI YANGILASH =====
 function updateChartsTheme(theme) {
     try {
-        if (typeof Chart !== 'undefined' && Chart.instances) {
-            var color = theme === 'light' ? '#888' : '#A0A0B8';
-            var gridColor = theme === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.03)';
-            for (var i = 0; i < Chart.instances.length; i++) {
-                var chart = Chart.instances[i];
-                if (chart && chart.options && chart.options.scales) {
+        if (typeof Chart === 'undefined' || !Chart.instances) return;
+        
+        var textColor = theme === 'light' ? '#555' : '#A0A0B8';
+        var gridColor = theme === 'light' ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)';
+        var borderColor = theme === 'light' ? '#e8e8f0' : 'rgba(255,255,255,0.06)';
+        
+        for (var i = 0; i < Chart.instances.length; i++) {
+            var chart = Chart.instances[i];
+            if (chart && chart.options) {
+                // Legend
+                if (chart.options.plugins && chart.options.plugins.legend) {
+                    if (chart.options.plugins.legend.labels) {
+                        chart.options.plugins.legend.labels.color = textColor;
+                    }
+                }
+                // Scales
+                if (chart.options.scales) {
                     if (chart.options.scales.x) {
-                        chart.options.scales.x.ticks.color = color;
-                        chart.options.scales.x.grid.color = gridColor;
+                        if (chart.options.scales.x.ticks) chart.options.scales.x.ticks.color = textColor;
+                        if (chart.options.scales.x.grid) chart.options.scales.x.grid.color = gridColor;
                     }
                     if (chart.options.scales.y) {
-                        chart.options.scales.y.ticks.color = color;
-                        chart.options.scales.y.grid.color = gridColor;
+                        if (chart.options.scales.y.ticks) chart.options.scales.y.ticks.color = textColor;
+                        if (chart.options.scales.y.grid) chart.options.scales.y.grid.color = gridColor;
                     }
-                    chart.update();
                 }
+                chart.update();
             }
         }
-    } catch(e) {}
+    } catch(e) {
+        console.log('Grafik yangilashda xatolik:', e);
+    }
 }
-
-document.addEventListener('DOMContentLoaded', loadTheme);
-console.log('✅ Theme.js yuklandi!');

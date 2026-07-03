@@ -7,7 +7,6 @@
     left: 0;
     background: rgba(15, 15, 26, 0.95);
     backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
     border-right: 1px solid rgba(255, 255, 255, 0.04);
     padding: 24px 16px;
     display: flex;
@@ -15,7 +14,6 @@
     transition: all 0.3s ease;
     z-index: 999;
     overflow-y: auto;
-    overflow-x: hidden;
 }
 
 .sidebar-brand {
@@ -26,6 +24,7 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
     margin-bottom: 24px;
 }
+
 .brand-icon {
     width: 48px;
     height: 48px;
@@ -38,10 +37,7 @@
     color: #fff;
     box-shadow: 0 8px 24px rgba(108, 99, 255, 0.3);
 }
-.brand-text {
-    display: flex;
-    flex-direction: column;
-}
+
 .brand-name {
     font-size: 22px;
     font-weight: 800;
@@ -49,8 +45,8 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    line-height: 1.2;
 }
+
 .brand-sub {
     font-size: 11px;
     font-weight: 500;
@@ -59,9 +55,6 @@
     text-transform: uppercase;
 }
 
-.sidebar-menu {
-    flex: 1;
-}
 .sidebar-menu ul {
     list-style: none;
 }
@@ -79,12 +72,6 @@
     font-size: 14px;
     font-weight: 500;
     transition: var(--transition);
-    position: relative;
-}
-.sidebar-menu ul li a i {
-    font-size: 18px;
-    width: 24px;
-    text-align: center;
 }
 .sidebar-menu ul li a:hover {
     background: rgba(108, 99, 255, 0.08);
@@ -149,14 +136,12 @@
     font-size: 16px;
 }
 
-/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
     .sidebar {
         transform: translateX(-100%);
         width: 280px;
         position: fixed;
         z-index: 1000;
-        height: 100vh;
     }
     .sidebar.open {
         transform: translateX(0);

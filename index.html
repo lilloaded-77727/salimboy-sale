@@ -5,16 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard | Salimboy Sale</title>
     
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    
-    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- CSS Fayllar -->
     <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="stylesheet" href="assets/css/sidebar.css" />
     <link rel="stylesheet" href="assets/css/dashboard.css" />
@@ -24,18 +18,15 @@
     
     <div class="app-container">
         
-        <!-- ===== SIDEBAR ===== -->
+        <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-brand">
-                <div class="brand-icon">
-                    <i class="fas fa-store"></i>
-                </div>
+                <div class="brand-icon"><i class="fas fa-store"></i></div>
                 <div class="brand-text">
                     <span class="brand-name">Salimboy</span>
                     <span class="brand-sub">Sale Pro</span>
                 </div>
             </div>
-
             <nav class="sidebar-menu">
                 <ul>
                     <li><a href="index.html" class="active"><i class="fas fa-th-large"></i><span>Boshqaruv</span></a></li>
@@ -48,7 +39,6 @@
                     <li><a href="pages/settings.html"><i class="fas fa-cog"></i><span>Sozlamalar</span></a></li>
                 </ul>
             </nav>
-
             <div class="sidebar-footer">
                 <div class="user-card">
                     <img src="https://ui-avatars.com/api/?name=Salimboy&background=6C63FF&color=fff&size=40&bold=true" alt="User" />
@@ -61,23 +51,22 @@
             </div>
         </aside>
 
-        <!-- ===== MAIN CONTENT ===== -->
+        <!-- Main Content -->
         <main class="main-content">
             
-            <!-- Top Header -->
+            <!-- Header -->
             <header class="top-header">
                 <div class="header-left">
-                    <button class="menu-toggle" id="menuToggle">
-                        <i class="fas fa-bars"></i>
-                    </button>
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
                     <div class="header-search">
                         <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Qidirish (Ctrl+K)" id="searchInput" />
+                        <input type="text" placeholder="Qidirish..." id="searchInput" />
                     </div>
                 </div>
                 <div class="header-right">
-                    <button class="icon-btn" id="notifBtn"><i class="fas fa-bell"></i><span class="dot"></span></button>
-                    <button class="icon-btn" id="darkModeBtn"><i class="fas fa-moon"></i></button>
+                    <button class="icon-btn" id="themeToggle" onclick="toggleTheme()">
+                        <i class="fas fa-moon"></i>
+                    </button>
                     <div class="header-date">
                         <i class="fas fa-calendar-alt"></i>
                         <span id="currentDate"></span>
@@ -85,13 +74,13 @@
                 </div>
             </header>
 
-            <!-- ===== DASHBOARD ===== -->
+            <!-- Dashboard -->
             <section class="dashboard">
                 
                 <!-- Welcome Banner -->
                 <div class="welcome-banner">
                     <div class="welcome-text">
-                        <h1>Xush kelibsiz, <span id="userName">Salimboy</span> рџ‘‹</h1>
+                        <h1>Xush kelibsiz, <span>Admin</span> 👋</h1>
                         <p>Bugungi savdo natijalari va tizim statistikasi</p>
                     </div>
                     <div class="welcome-actions">
@@ -104,7 +93,7 @@
                     </div>
                 </div>
 
-                <!-- Stats Cards - Dumaloq Statistika -->
+                <!-- Stats Cards -->
                 <div class="stats-grid">
                     <div class="stat-card stat-purple">
                         <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
@@ -113,124 +102,115 @@
                             <p class="stat-number" id="todayTotal">0 so'm</p>
                             <span class="stat-change positive"><i class="fas fa-arrow-up"></i> +12.5%</span>
                         </div>
-                        <div class="stat-circle">
-                            <svg viewBox="0 0 36 36" class="circular-chart">
-                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                                <path class="circle" stroke-dasharray="85, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                            </svg>
-                            <span class="stat-percent">85%</span>
-                        </div>
                     </div>
                     <div class="stat-card stat-blue">
-                        <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+                        <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
                         <div class="stat-info">
-                            <h3>Naxt savdo</h3>
-                            <p class="stat-number" id="todayCash">0 so'm</p>
-                        </div>
-                        <div class="stat-circle">
-                            <svg viewBox="0 0 36 36" class="circular-chart">
-                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                                <path class="circle" stroke-dasharray="60, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                            </svg>
-                            <span class="stat-percent">60%</span>
+                            <h3>Buyurtmalar</h3>
+                            <p class="stat-number" id="totalOrders">0</p>
+                            <span class="stat-change positive"><i class="fas fa-arrow-up"></i> +8.2%</span>
                         </div>
                     </div>
                     <div class="stat-card stat-green">
-                        <div class="stat-icon"><i class="fas fa-credit-card"></i></div>
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
                         <div class="stat-info">
-                            <h3>Terminal savdo</h3>
-                            <p class="stat-number" id="todayTerminal">0 so'm</p>
-                        </div>
-                        <div class="stat-circle">
-                            <svg viewBox="0 0 36 36" class="circular-chart">
-                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                                <path class="circle" stroke-dasharray="25, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                            </svg>
-                            <span class="stat-percent">25%</span>
+                            <h3>Mijozlar</h3>
+                            <p class="stat-number" id="totalCustomers">0</p>
+                            <span class="stat-change positive"><i class="fas fa-arrow-up"></i> +5.3%</span>
                         </div>
                     </div>
                     <div class="stat-card stat-red">
-                        <div class="stat-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                        <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
                         <div class="stat-info">
-                            <h3>Nasiya savdo</h3>
-                            <p class="stat-number" id="todayDebt">0 so'm</p>
-                        </div>
-                        <div class="stat-circle">
-                            <svg viewBox="0 0 36 36" class="circular-chart">
-                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                                <path class="circle" stroke-dasharray="15, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                            </svg>
-                            <span class="stat-percent">15%</span>
+                            <h3>Qarzdorlar</h3>
+                            <p class="stat-number" id="totalDebtors">0</p>
+                            <span class="stat-change negative"><i class="fas fa-arrow-down"></i> -2.1%</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Oylik Savdo Grafigi -->
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3><i class="fas fa-chart-area"></i> Oylik savdo dinamikasi</h3>
-                        <select id="monthSelect">
-                            <option value="0">Yanvar</option>
-                            <option value="1">Fevral</option>
-                            <option value="2">Mart</option>
-                            <option value="3">Aprel</option>
-                            <option value="4">May</option>
-                            <option value="5">Iyun</option>
-                            <option value="6" selected>Iyul</option>
-                            <option value="7">Avgust</option>
-                            <option value="8">Sentabr</option>
-                            <option value="9">Oktabr</option>
-                            <option value="10">Noyabr</option>
-                            <option value="11">Dekabr</option>
-                        </select>
+                <!-- Charts -->
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-area"></i> Savdo dinamikasi</h3>
+                            <select id="chartPeriod">
+                                <option value="week">Bu hafta</option>
+                                <option value="month" selected>Bu oy</option>
+                                <option value="year">Bu yil</option>
+                            </select>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="salesChartCanvas"></canvas>
+                        </div>
                     </div>
-                    <div class="chart-body">
-                        <canvas id="monthlyChart"></canvas>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-pie-chart"></i> Kategoriyalar</h3>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="categoryChartCanvas"></canvas>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Kam qolgan va sotilmagan mahsulotlar -->
-                <div class="dashboard-grid">
-                    <!-- Kam qolgan mahsulotlar -->
-                    <div class="table-card">
-                        <div class="table-header">
-                            <h3><i class="fas fa-exclamation-triangle" style="color: #F39C12;"></i> Kam qolgan mahsulotlar</h3>
-                            <span class="badge-count" id="lowStockCount">0</span>
+                <!-- Quick Actions -->
+                <div class="quick-actions-grid">
+                    <div class="quick-action-card" onclick="window.location.href='pages/cashier.html'">
+                        <div class="qa-icon" style="background:rgba(108,99,255,0.15);color:#6C63FF;"><i class="fas fa-cash-register"></i></div>
+                        <div class="qa-info">
+                            <h4>Tez sotuv</h4>
+                            <p>Yangi buyurtma qo'shish</p>
                         </div>
-                        <div class="table-wrapper">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Mahsulot</th>
-                                        <th>Zaxira</th>
-                                        <th>Holat</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="lowStockTable"></tbody>
-                            </table>
-                        </div>
+                        <i class="fas fa-arrow-right"></i>
                     </div>
+                    <div class="quick-action-card" onclick="window.location.href='pages/warehouse.html'">
+                        <div class="qa-icon" style="background:rgba(46,204,113,0.15);color:#2ECC71;"><i class="fas fa-boxes"></i></div>
+                        <div class="qa-info">
+                            <h4>Ombor</h4>
+                            <p>Mahsulotlarni boshqarish</p>
+                        </div>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="quick-action-card" onclick="window.location.href='pages/reports.html'">
+                        <div class="qa-icon" style="background:rgba(243,156,18,0.15);color:#F39C12;"><i class="fas fa-chart-bar"></i></div>
+                        <div class="qa-info">
+                            <h4>Hisobot</h4>
+                            <p>Batafsil tahlillar</p>
+                        </div>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="quick-action-card" onclick="window.location.href='pages/debtors.html'">
+                        <div class="qa-icon" style="background:rgba(231,76,60,0.15);color:#E74C3C;"><i class="fas fa-hand-holding-usd"></i></div>
+                        <div class="qa-info">
+                            <h4>Qarzdorlar</h4>
+                            <p>Qarzlarni boshqarish</p>
+                        </div>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
 
-                    <!-- Sotilmagan mahsulotlar -->
-                    <div class="table-card">
-                        <div class="table-header">
-                            <h3><i class="fas fa-box" style="color: #E74C3C;"></i> Sotilmagan mahsulotlar</h3>
-                            <span class="badge-count" id="unsoldCount">0</span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Mahsulot</th>
-                                        <th>Zaxira</th>
-                                        <th>Narx</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="unsoldTable"></tbody>
-                            </table>
-                        </div>
+                <!-- Recent Activity -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3><i class="fas fa-clock"></i> So'nggi faoliyat</h3>
+                        <a href="#" class="view-all">Barchasini ko'rish →</a>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Buyurtma ID</th>
+                                    <th>Mijoz</th>
+                                    <th>Mahsulot</th>
+                                    <th>Miqdor</th>
+                                    <th>Summa</th>
+                                    <th>Sana</th>
+                                    <th>Holat</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrders"></tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -238,20 +218,13 @@
         </main>
     </div>
 
-    <!-- ===== SCRIPTS ===== -->
+    <!-- Scripts -->
     <script src="data/database.js"></script>
-    <script src="assets/js/utils.js"></script>
-    <script src="assets/js/api.js"></script>
+    <script src="assets/js/env.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="assets/js/supabase.js"></script>
+    <script src="assets/js/theme.js"></script>
     <script src="assets/js/dashboard.js"></script>
     <script src="assets/js/app.js"></script>
-    <script src="assets/js/theme.js"></script>`n</body>
-</html><!-- Supabase JS -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="assets/js/supabase.js"></script>
-<!-- ENV va Supabase -->
-<script src="assets/js/env.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="assets/js/supabase.js"></script>
-<!-- Favicon -->
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏷️</text></svg>">
-
+</body>
+</html>
