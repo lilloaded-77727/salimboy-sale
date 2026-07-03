@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rashodlar | Salimboy Sale</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/sidebar.css" />
+    <link rel="stylesheet" href="../assets/css/expenses.css" />
+    <link rel="stylesheet" href="../assets/css/responsive.css" />
+</head>
+<body>
+    
+    <div class="app-container">
+        
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon"><i class="fas fa-store"></i></div>
+                <div class="brand-text">
+                    <span class="brand-name">Salimboy</span>
+                    <span class="brand-sub">Sale Pro</span>
+                </div>
+            </div>
+            <nav class="sidebar-menu">
+                <ul>
+                    <li><a href="../index.html"><i class="fas fa-th-large"></i><span>Boshqaruv</span></a></li>
+                    <li><a href="cashier.html"><i class="fas fa-cash-register"></i><span>Kassa</span><span class="badge">12</span></a></li>
+                    <li><a href="warehouse.html"><i class="fas fa-boxes"></i><span>Ombor</span><span class="badge">48</span></a></li>
+                    <li><a href="reports.html"><i class="fas fa-chart-line"></i><span>Hisobot</span></a></li>
+                    <li><a href="expenses.html" class="active"><i class="fas fa-wallet"></i><span>Rashodlar</span></a></li>
+                    <li><a href="employees.html"><i class="fas fa-users"></i><span>Hodimlar</span></a></li>
+                    <li><a href="debtors.html"><i class="fas fa-hand-holding-usd"></i><span>Nasiya</span><span class="badge danger">8</span></a></li>
+                    <li><a href="settings.html"><i class="fas fa-cog"></i><span>Sozlamalar</span></a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <img src="https://ui-avatars.com/api/?name=Salimboy&background=6C63FF&color=fff&size=40&bold=true" alt="User" />
+                    <div class="user-info">
+                        <span class="user-name">Salimboy</span>
+                        <span class="user-role">Admin</span>
+                    </div>
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="main-content expenses-main">
+            
+            <!-- Header -->
+            <header class="top-header expenses-header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                    <h2><i class="fas fa-wallet"></i> Rashodlar</h2>
+                </div>
+                <div class="header-right">
+                    <button class="btn-add" onclick="openAddExpenseModal()">
+                        <i class="fas fa-plus"></i> Rashod qo'shish
+                    </button>
+                    <div class="header-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span id="currentDate"></span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ===== RASHODLAR CONTENT ===== -->
+            <section class="expenses-content">
+                
+                <!-- ===== RASHOD QO'SHISH MODAL ===== -->
+                <div class="modal-overlay" id="addExpenseModal">
+                    <div class="modal-content expense-modal">
+                        <div class="modal-header">
+                            <h3><i class="fas fa-plus-circle"></i> Rashod qo'shish</h3>
+                            <button class="modal-close" onclick="closeAddExpenseModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label><i class="fas fa-tag"></i> Kategoriya *</label>
+                                <select id="expenseCategory" class="form-control">
+                                    <option value="ishchi">Ishchi oylik</option>
+                                    <option value="komunal">Komunal xizmatlar</option>
+                                    <option value="ijara">Ijara haqqi</option>
+                                    <option value="soliq">Soliq</option>
+                                    <option value="mahsulot">Mahsulot xaridi</option>
+                                    <option value="transport">Transport</option>
+                                    <option value="boshqa">Boshqa</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-align-left"></i> Tavsif *</label>
+                                <input type="text" id="expenseDescription" class="form-control" placeholder="Rashod tavsifi" required />
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-money-bill"></i> Summa *</label>
+                                <input type="number" id="expenseAmount" class="form-control" placeholder="0" required />
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-credit-card"></i> To'lov turi</label>
+                                <select id="expensePaymentType" class="form-control">
+                                    <option value="cash">Naxt</option>
+                                    <option value="plastic">Plastik</option>
+                                    <option value="account">Hisob raqam</option>
+                                </select>
+                            </div>
+                            <button class="btn-primary" onclick="addExpense()" style="width:100%;">
+                                <i class="fas fa-save"></i> Rashodni saqlash
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== STATISTIKA KARTALARI ===== -->
+                <div class="stats-grid expenses-stats">
+                    <div class="stat-card stat-purple">
+                        <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+                        <div class="stat-info">
+                            <h3>Jami rashodlar</h3>
+                            <p class="stat-number" id="totalExpenses">0 so'm</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-blue">
+                        <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+                        <div class="stat-info">
+                            <h3>Kunlik rashod</h3>
+                            <p class="stat-number" id="dailyExpenses">0 so'm</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-red">
+                        <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
+                        <div class="stat-info">
+                            <h3>Oylik rashod</h3>
+                            <p class="stat-number" id="monthlyExpenses">0 so'm</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-green">
+                        <div class="stat-icon"><i class="fas fa-calendar-year"></i></div>
+                        <div class="stat-info">
+                            <h3>Yillik rashod</h3>
+                            <p class="stat-number" id="yearlyExpenses">0 so'm</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== QIDIRUV ===== -->
+                <div class="expenses-search">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="expenseSearch" placeholder="Rashod qidirish..." onkeyup="searchExpenses()" />
+                    </div>
+                    <div class="filter-group">
+                        <select id="categoryFilter" onchange="searchExpenses()">
+                            <option value="">Barcha kategoriyalar</option>
+                            <option value="ishchi">Ishchi oylik</option>
+                            <option value="komunal">Komunal</option>
+                            <option value="ijara">Ijara</option>
+                            <option value="soliq">Soliq</option>
+                            <option value="mahsulot">Mahsulot xaridi</option>
+                            <option value="transport">Transport</option>
+                            <option value="boshqa">Boshqa</option>
+                        </select>
+                        <select id="paymentFilter" onchange="searchExpenses()">
+                            <option value="">Barcha to'lovlar</option>
+                            <option value="cash">Naxt</option>
+                            <option value="plastic">Plastik</option>
+                            <option value="account">Hisob raqam</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ===== RASHODLAR JADVALI ===== -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3><i class="fas fa-list"></i> Rashodlar ro'yxati</h3>
+                        <span class="badge-count" id="expenseCount">0 ta</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Sana</th>
+                                    <th>Kategoriya</th>
+                                    <th>Tavsif</th>
+                                    <th>Summa</th>
+                                    <th>To'lov turi</th>
+                                    <th>Amallar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expensesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="../data/database.js"></script>
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/expenses.js"></script>
+    <script src="../assets/js/app.js"></script>
+</body>
+</html>
