@@ -19,9 +19,17 @@ function showNotification(message, type) {
         info: '#6C63FF'
     };
     
+    // Eski notificationlarni o'chirish
+    var oldNotifs = document.querySelectorAll('.custom-notification');
+    for (var i = 0; i < oldNotifs.length; i++) {
+        if (oldNotifs[i] && oldNotifs[i].parentNode) {
+            oldNotifs[i].remove();
+        }
+    }
+    
     var notification = document.createElement('div');
     notification.className = 'custom-notification';
-    notification.style.cssText = 'position:fixed;top:20px;right:20px;padding:16px 24px;background:#FFFFFF;border-left:4px solid ' + colors[type] + ';border-radius:12px;color:#1A1A2E;font-family:Inter,sans-serif;font-size:14px;box-shadow:0 20px 60px rgba(0,0,0,0.15);z-index:99999;animation:slideInRight 0.4s ease;max-width:420px;border:1px solid #EAEAEA;display:flex;align-items:center;gap:12px;';
+    notification.style.cssText = 'position:fixed;top:20px;right:20px;padding:16px 24px;background:var(--bg-card);border-left:4px solid ' + colors[type] + ';border-radius:12px;color:var(--text-primary);font-family:Inter,sans-serif;font-size:14px;box-shadow:0 20px 60px rgba(0,0,0,0.3);z-index:99999;animation:slideInRight 0.4s ease;max-width:420px;border:1px solid var(--border-color);display:flex;align-items:center;gap:12px;';
     
     var iconMap = {
         success: '✅',
@@ -35,8 +43,34 @@ function showNotification(message, type) {
     
     setTimeout(function() {
         notification.style.animation = 'slideOutRight 0.4s ease forwards';
-        setTimeout(function() { if (notification.parentNode) notification.remove(); }, 400);
+        setTimeout(function() {
+            if (notification && notification.parentNode) {
+                notification.remove();
+            }
+        }, 400);
     }, 4000);
 }
+
+// ===== SIDEBAR TOGGLE =====
+document.addEventListener('DOMContentLoaded', function() {
+    var menuToggle = document.getElementById('menuToggle');
+    var sidebar = document.getElementById('sidebar');
+    
+    if (menuToggle && sidebar) {
+        menuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            sidebar.classList.toggle('open');
+        });
+        
+        // Tashqariga bosganda yopish
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) {
+                if (sidebar && !sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+                    sidebar.classList.remove('open');
+                }
+            }
+        });
+    }
+});
 
 console.log('✅ App.js yuklandi!');

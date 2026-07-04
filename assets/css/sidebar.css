@@ -1,149 +1,75 @@
-﻿/* ===== SIDEBAR ===== */
-.sidebar {
-    width: 280px;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background: rgba(15, 15, 26, 0.95);
-    backdrop-filter: blur(30px);
-    border-right: 1px solid rgba(255, 255, 255, 0.04);
-    padding: 24px 16px;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
-    z-index: 999;
-    overflow-y: auto;
+﻿/* ============================================================
+   SALIMBOY SALE - SIDEBAR
+   ============================================================ */
+
+.sidebar::-webkit-scrollbar {
+    width: 3px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 10px;
 }
 
-.sidebar-brand {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 8px 12px 24px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    margin-bottom: 24px;
-}
-
-.brand-icon {
-    width: 48px;
-    height: 48px;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    color: #fff;
-    box-shadow: 0 8px 24px rgba(108, 99, 255, 0.3);
-}
-
-.brand-name {
-    font-size: 22px;
-    font-weight: 800;
-    background: linear-gradient(135deg, #fff, #A0A0B8);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.brand-sub {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
-
-.sidebar-menu ul {
-    list-style: none;
-}
-.sidebar-menu ul li {
-    margin-bottom: 4px;
-}
-.sidebar-menu ul li a {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 12px 16px;
-    border-radius: var(--radius-sm);
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
+.sidebar-brand .brand-icon {
     transition: var(--transition);
 }
-.sidebar-menu ul li a:hover {
-    background: rgba(108, 99, 255, 0.08);
-    color: var(--text-primary);
+.sidebar-brand .brand-icon:hover {
+    transform: scale(1.05) rotate(-6deg);
 }
-.sidebar-menu ul li a.active {
-    background: linear-gradient(135deg, rgba(108, 99, 255, 0.2), rgba(108, 99, 255, 0.05));
-    color: var(--primary);
-    box-shadow: inset 3px 0 0 var(--primary);
-}
+
 .sidebar-menu ul li a .badge {
-    margin-left: auto;
-    padding: 2px 10px;
-    border-radius: 50px;
-    font-size: 11px;
-    font-weight: 700;
-    background: rgba(108, 99, 255, 0.2);
+    background: rgba(108,99,255,0.12);
     color: var(--primary);
 }
 .sidebar-menu ul li a .badge.danger {
-    background: rgba(231, 76, 60, 0.2);
-    color: var(--danger);
+    background: rgba(231,76,60,0.12);
+    color: #E74C3C;
 }
 
-.sidebar-footer {
-    margin-top: auto;
-    padding-top: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.04);
-}
-.user-card {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    border-radius: var(--radius-sm);
+.sidebar-menu ul li a i {
     transition: var(--transition);
-    cursor: pointer;
 }
-.user-card:hover {
-    background: rgba(255, 255, 255, 0.03);
+.sidebar-menu ul li a:hover i {
+    transform: scale(1.1);
+}
+
+.user-card {
+    transition: var(--transition);
 }
 .user-card img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
+    border: 2px solid rgba(108,99,255,0.15);
 }
-.user-info {
-    flex: 1;
-}
-.user-name {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-.user-role {
-    font-size: 12px;
-    color: var(--text-muted);
+.user-card:hover {
+    background: rgba(108,99,255,0.04);
 }
 .user-card i {
-    color: var(--text-muted);
-    font-size: 16px;
+    transition: var(--transition);
+}
+.user-card:hover i {
+    color: var(--primary);
 }
 
-@media (max-width: 768px) {
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
     .sidebar {
         transform: translateX(-100%);
-        width: 280px;
+        width: 270px;
         position: fixed;
         z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        background: rgba(10,10,26,0.98);
+        backdrop-filter: blur(30px);
+        transition: transform 0.3s ease;
     }
     .sidebar.open {
         transform: translateX(0);
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 260px !important;
     }
 }

@@ -1,4 +1,4 @@
-﻿// ===== SUPABASE.JS - SALIMBOY SALE SUPABASE ULASH =====
+﻿// ===== SUPABASE.JS - SUPABASE ULASH =====
 
 var supabaseClient = null;
 var isSupabaseReady = false;
@@ -10,10 +10,8 @@ function loadSupabase() {
                 resolve(supabaseClient);
                 return;
             }
-
             var url = window.ENV ? window.ENV.SUPABASE_URL : 'https://urlaiwcfxzptvmewnjqb.supabase.co';
             var key = window.ENV ? window.ENV.SUPABASE_ANON_KEY : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVybGFpd2NmeHpwdHZtZXduanFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMDA0MDgsImV4cCI6MjA5ODY3NjQwOH0.5zWd7os1pMlJ97Dp5uEHMVun5oIxbG6ZGsicIPEhGpw';
-
             if (typeof supabase === 'undefined') {
                 var script = document.createElement('script');
                 script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
@@ -23,9 +21,7 @@ function loadSupabase() {
                     console.log('✅ Supabase ulandi!');
                     resolve(supabaseClient);
                 };
-                script.onerror = function() {
-                    reject('❌ Supabase yuklanmadi!');
-                };
+                script.onerror = function() { reject('❌ Supabase yuklanmadi!'); };
                 document.head.appendChild(script);
             } else {
                 supabaseClient = supabase.createClient(url, key);
@@ -33,9 +29,7 @@ function loadSupabase() {
                 console.log('✅ Supabase ulandi!');
                 resolve(supabaseClient);
             }
-        } catch(e) {
-            reject('❌ Xatolik: ' + e.message);
-        }
+        } catch(e) { reject('❌ Xatolik: ' + e.message); }
     });
 }
 
@@ -59,15 +53,12 @@ function testSupabaseConnection() {
 function supabase_getProducts() {
     return supabaseClient.from('products').select('*').order('created_at', { ascending: false });
 }
-
 function supabase_addProduct(product) {
     return supabaseClient.from('products').insert([product]);
 }
-
 function supabase_updateProduct(id, data) {
     return supabaseClient.from('products').update(data).eq('id', id);
 }
-
 function supabase_deleteProduct(id) {
     return supabaseClient.from('products').delete().eq('id', id);
 }
@@ -76,7 +67,6 @@ function supabase_deleteProduct(id) {
 function supabase_getSales() {
     return supabaseClient.from('sales').select('*').order('date', { ascending: false });
 }
-
 function supabase_addSale(sale) {
     return supabaseClient.from('sales').insert([sale]);
 }
@@ -85,11 +75,9 @@ function supabase_addSale(sale) {
 function supabase_getShifts() {
     return supabaseClient.from('shifts').select('*').order('start_time', { ascending: false });
 }
-
 function supabase_openShift(shift) {
     return supabaseClient.from('shifts').insert([shift]);
 }
-
 function supabase_closeShift(id, data) {
     return supabaseClient.from('shifts').update(data).eq('id', id);
 }
@@ -98,11 +86,9 @@ function supabase_closeShift(id, data) {
 function supabase_getDebtors() {
     return supabaseClient.from('debtors').select('*').order('date', { ascending: false });
 }
-
 function supabase_addDebtor(debtor) {
     return supabaseClient.from('debtors').insert([debtor]);
 }
-
 function supabase_updateDebtor(id, data) {
     return supabaseClient.from('debtors').update(data).eq('id', id);
 }
@@ -111,7 +97,6 @@ function supabase_updateDebtor(id, data) {
 function supabase_getExpenses() {
     return supabaseClient.from('expenses').select('*').order('date', { ascending: false });
 }
-
 function supabase_addExpense(expense) {
     return supabaseClient.from('expenses').insert([expense]);
 }
@@ -120,7 +105,6 @@ function supabase_addExpense(expense) {
 function supabase_getEmployees() {
     return supabaseClient.from('employees').select('*').order('hire_date', { ascending: false });
 }
-
 function supabase_addEmployee(employee) {
     return supabaseClient.from('employees').insert([employee]);
 }
@@ -129,7 +113,6 @@ function supabase_addEmployee(employee) {
 function supabase_getSettings() {
     return supabaseClient.from('settings').select('*').limit(1);
 }
-
 function supabase_updateSettings(data) {
     return supabaseClient.from('settings').update(data).eq('id', 1);
 }
@@ -141,12 +124,10 @@ function supabase_getStatistics(date, type) {
     if (type) query = query.eq('type', type);
     return query;
 }
-
 function supabase_updateStatistics(data) {
     return supabaseClient.from('statistics').upsert([data], { onConflict: 'date,type' });
 }
 
-// ===== EKSPORT =====
 window.SupabaseAPI = {
     loadSupabase: loadSupabase,
     testConnection: testSupabaseConnection,

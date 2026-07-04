@@ -48,21 +48,22 @@
                     <i class="fas fa-ellipsis-v"></i>
                 </div>
             </div>
-        </aside>`n    <!-- Sidebar overlay -->`n    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+        </aside>
 
         <!-- ===== MAIN CONTENT ===== -->
         <main class="main-content expenses-main">
             
-            <!-- Header -->
+            <!-- ===== HEADER ===== -->
             <header class="top-header expenses-header">
                 <div class="header-left">
                     <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
                     <h2><i class="fas fa-wallet"></i> Rashodlar</h2>
                 </div>
-                <div class="header-right">`n                    <button class="icon-btn" id="themeToggle" onclick="toggleTheme()">`n                        <i class="fas fa-moon"></i>`n                    </button>
+                <div class="header-right">
                     <button class="btn-add" onclick="openAddExpenseModal()">
                         <i class="fas fa-plus"></i> Rashod qo'shish
                     </button>
+                    <button class="icon-btn" id="themeToggle"><i class="fas fa-moon"></i></button>
                     <div class="header-date">
                         <i class="fas fa-calendar-alt"></i>
                         <span id="currentDate"></span>
@@ -70,10 +71,10 @@
                 </div>
             </header>
 
-            <!-- ===== RASHODLAR CONTENT ===== -->
+            <!-- ===== EXPENSES CONTENT ===== -->
             <section class="expenses-content">
                 
-                <!-- ===== RASHOD QO'SHISH MODAL ===== -->
+                <!-- ===== ADD EXPENSE MODAL ===== -->
                 <div class="modal-overlay" id="addExpenseModal">
                     <div class="modal-content expense-modal">
                         <div class="modal-header">
@@ -82,7 +83,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="form-group">
-                                <label><i class="fas fa-tag"></i> Kategoriya *</label>
+                                <label><i class="fas fa-tag"></i> Kategoriya</label>
                                 <select id="expenseCategory" class="form-control">
                                     <option value="ishchi">Ishchi oylik</option>
                                     <option value="komunal">Komunal xizmatlar</option>
@@ -94,12 +95,12 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label><i class="fas fa-align-left"></i> Tavsif *</label>
-                                <input type="text" id="expenseDescription" class="form-control" placeholder="Rashod tavsifi" required />
+                                <label><i class="fas fa-align-left"></i> Tavsif</label>
+                                <input type="text" id="expenseDescription" class="form-control" placeholder="Rashod tavsifi" />
                             </div>
                             <div class="form-group">
-                                <label><i class="fas fa-money-bill"></i> Summa *</label>
-                                <input type="number" id="expenseAmount" class="form-control" placeholder="0" required />
+                                <label><i class="fas fa-money-bill"></i> Summa</label>
+                                <input type="number" id="expenseAmount" class="form-control" placeholder="0" />
                             </div>
                             <div class="form-group">
                                 <label><i class="fas fa-credit-card"></i> To'lov turi</label>
@@ -116,7 +117,7 @@
                     </div>
                 </div>
 
-                <!-- ===== STATISTIKA KARTALARI ===== -->
+                <!-- ===== STATS ===== -->
                 <div class="stats-grid expenses-stats">
                     <div class="stat-card stat-purple">
                         <div class="stat-icon"><i class="fas fa-wallet"></i></div>
@@ -148,7 +149,7 @@
                     </div>
                 </div>
 
-                <!-- ===== QIDIRUV ===== -->
+                <!-- ===== SEARCH ===== -->
                 <div class="expenses-search">
                     <div class="search-box">
                         <i class="fas fa-search"></i>
@@ -174,7 +175,7 @@
                     </div>
                 </div>
 
-                <!-- ===== RASHODLAR JADVALI ===== -->
+                <!-- ===== EXPENSES TABLE ===== -->
                 <div class="table-card">
                     <div class="table-header">
                         <h3><i class="fas fa-list"></i> Rashodlar ro'yxati</h3>
@@ -189,11 +190,13 @@
                                     <th>Kategoriya</th>
                                     <th>Tavsif</th>
                                     <th>Summa</th>
-                                    <th>To'lov turi</th>
+                                    <th>To'lov</th>
                                     <th>Amallar</th>
                                 </tr>
                             </thead>
-                            <tbody id="expensesTableBody"></tbody>
+                            <tbody id="expensesTableBody">
+                                <!-- JS orqali to'ldiriladi -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -204,20 +207,11 @@
 
     <!-- ===== SCRIPTS ===== -->
     <script src="../data/database.js"></script>
-    <script src="../assets/js/utils.js"></script>
-    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/env.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="../assets/js/supabase.js"></script>
+    <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/expenses.js"></script>
     <script src="../assets/js/app.js"></script>
-    <script src="../assets/js/sidebar-toggle.js"></script>`n    <script src="../assets/js/theme.js"></script>`n</body>
-</html><!-- Supabase JS -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="../assets/js/supabase.js"></script>
-<!-- ENV va Supabase -->
-<script src="../assets/js/env.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="../assets/js/supabase.js"></script>
-<!-- Favicon -->
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏷️</text></svg>">
-
-
-
+</body>
+</html>

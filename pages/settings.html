@@ -48,18 +48,19 @@
                     <i class="fas fa-ellipsis-v"></i>
                 </div>
             </div>
-        </aside>`n    <!-- Sidebar overlay -->`n    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+        </aside>
 
         <!-- ===== MAIN CONTENT ===== -->
         <main class="main-content settings-main">
             
-            <!-- Header -->
+            <!-- ===== HEADER ===== -->
             <header class="top-header settings-header">
                 <div class="header-left">
                     <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
                     <h2><i class="fas fa-cog"></i> Sozlamalar</h2>
                 </div>
-                <div class="header-right">`n                    <button class="icon-btn" id="themeToggle" onclick="toggleTheme()">`n                        <i class="fas fa-moon"></i>`n                    </button>
+                <div class="header-right">
+                    <button class="icon-btn" id="themeToggle"><i class="fas fa-moon"></i></button>
                     <div class="header-date">
                         <i class="fas fa-calendar-alt"></i>
                         <span id="currentDate"></span>
@@ -67,42 +68,39 @@
                 </div>
             </header>
 
-            <!-- ===== SOZLAMALAR CONTENT ===== -->
+            <!-- ===== SETTINGS CONTENT ===== -->
             <section class="settings-content">
                 
-                <!-- ===== TAB MENU ===== -->
+                <!-- ===== TABS ===== -->
                 <div class="settings-tabs">
                     <button class="tab-btn active" data-tab="general" onclick="switchTab('general')">
                         <i class="fas fa-store"></i> Umumiy
                     </button>
                     <button class="tab-btn" data-tab="receipt" onclick="switchTab('receipt')">
-                        <i class="fas fa-receipt"></i> Chek dizayni
-                    </button>
-                    <button class="tab-btn" data-tab="theme" onclick="switchTab('theme')">
-                        <i class="fas fa-palette"></i> Rang va tema
+                        <i class="fas fa-receipt"></i> Chek
                     </button>
                     <button class="tab-btn" data-tab="backup" onclick="switchTab('backup')">
                         <i class="fas fa-database"></i> Zaxira
                     </button>
                 </div>
 
-                <!-- ===== TAB CONTENT ===== -->
+                <!-- ===== PANELS ===== -->
                 <div class="settings-panels">
                     
-                    <!-- ===== 1. UMUMIY SOZLAMALAR ===== -->
+                    <!-- ===== GENERAL ===== -->
                     <div class="settings-panel active" id="panel-general">
                         <div class="settings-card">
                             <h3><i class="fas fa-store"></i> Do'kon ma'lumotlari</h3>
                             <div class="form-group">
                                 <label><i class="fas fa-store"></i> Do'kon nomi</label>
-                                <input type="text" id="shopName" class="form-control" placeholder="Do'kon nomi" />
+                                <input type="text" id="shopName" class="form-control" placeholder="Do'kon nomi" value="Salimboy Sale" />
                             </div>
                             <div class="form-group">
                                 <label><i class="fas fa-user"></i> Do'kon egasi</label>
-                                <input type="text" id="shopOwner" class="form-control" placeholder="Do'kon egasi" />
+                                <input type="text" id="shopOwner" class="form-control" placeholder="Do'kon egasi" value="Salimboy" />
                             </div>
                             <div class="form-group">
-                                <label><i class="fas fa-phone"></i> Telefon raqam</label>
+                                <label><i class="fas fa-phone"></i> Telefon</label>
                                 <input type="text" id="shopPhone" class="form-control" placeholder="+998 90 123 45 67" />
                             </div>
                             <div class="form-group">
@@ -115,83 +113,33 @@
                         </div>
                     </div>
 
-                    <!-- ===== 2. CHEK DIZAYNI ===== -->
+                    <!-- ===== RECEIPT ===== -->
                     <div class="settings-panel" id="panel-receipt">
                         <div class="settings-card">
                             <h3><i class="fas fa-receipt"></i> Chek dizayni</h3>
                             <div class="form-group">
                                 <label><i class="fas fa-align-left"></i> Chek sarlavhasi</label>
-                                <input type="text" id="receiptHeader" class="form-control" placeholder="Chek sarlavhasi" />
+                                <input type="text" id="receiptHeader" class="form-control" placeholder="Chek sarlavhasi" value="Salimboy Sale" />
                             </div>
                             <div class="form-group">
                                 <label><i class="fas fa-align-center"></i> Chek pastki matni</label>
-                                <textarea id="receiptFooter" class="form-control" rows="3" placeholder="Chek pastki matni"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-font"></i> Chek shrifti</label>
-                                <select id="receiptFont" class="form-control">
-                                    <option value="monospace">Monospace</option>
-                                    <option value="sans-serif">Sans-serif</option>
-                                    <option value="serif">Serif</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-print"></i> Chek o'lchami</label>
-                                <select id="receiptSize" class="form-control">
-                                    <option value="small">Kichik (58mm)</option>
-                                    <option value="medium" selected>O'rta (80mm)</option>
-                                    <option value="large">Katta (100mm)</option>
-                                </select>
+                                <textarea id="receiptFooter" class="form-control" rows="3" placeholder="Chek pastki matni">Salimboy Sale dasturi tomonidan ishlab chiqarilgan</textarea>
                             </div>
                             <button class="btn-primary" onclick="saveReceiptSettings()">
                                 <i class="fas fa-save"></i> Saqlash
                             </button>
                             <button class="btn-outline" onclick="previewReceipt()" style="margin-top:8px;">
-                                <i class="fas fa-eye"></i> Chekni ko'rish
+                                <i class="fas fa-eye"></i> Ko'rish
                             </button>
                         </div>
                     </div>
 
-                    <!-- ===== 3. RANG VA TEMA ===== -->
-                    <div class="settings-panel" id="panel-theme">
-                        <div class="settings-card">
-                            <h3><i class="fas fa-palette"></i> Rang va tema</h3>
-                            <div class="form-group">
-                                <label><i class="fas fa-moon"></i> Tema</label>
-                                <select id="themeMode" class="form-control" onchange="changeTheme()">
-                                    <option value="dark">Qorong'u (Dark)</option>
-                                    <option value="light">Yorug' (Light)</option>
-                                    <option value="auto">Avtomatik</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-paint-bucket"></i> Asosiy rang</label>
-                                <div class="color-picker-group">
-                                    <input type="color" id="primaryColor" onchange="changePrimaryColor()" />
-                                    <span id="colorHex">#6C63FF</span>
-                                </div>
-                            </div>
-                            <div class="color-presets">
-                                <span>Tezkor ranglar:</span>
-                                <button class="color-preset" style="background:#6C63FF;" onclick="setColor('#6C63FF')"></button>
-                                <button class="color-preset" style="background:#3498DB;" onclick="setColor('#3498DB')"></button>
-                                <button class="color-preset" style="background:#2ECC71;" onclick="setColor('#2ECC71')"></button>
-                                <button class="color-preset" style="background:#F39C12;" onclick="setColor('#F39C12')"></button>
-                                <button class="color-preset" style="background:#E74C3C;" onclick="setColor('#E74C3C')"></button>
-                                <button class="color-preset" style="background:#9B59B6;" onclick="setColor('#9B59B6')"></button>
-                            </div>
-                            <button class="btn-primary" onclick="saveThemeSettings()">
-                                <i class="fas fa-save"></i> Saqlash
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- ===== 4. ZAXIRA ===== -->
+                    <!-- ===== BACKUP ===== -->
                     <div class="settings-panel" id="panel-backup">
                         <div class="settings-card">
-                            <h3><i class="fas fa-database"></i> Ma'lumotlar zaxirasi</h3>
+                            <h3><i class="fas fa-database"></i> Zaxira</h3>
                             <div class="backup-info">
-                                <p><i class="fas fa-info-circle"></i> Barcha ma'lumotlar brauzeringizda saqlanadi.</p>
+                                <p><i class="fas fa-info-circle"></i> Barcha ma'lumotlar brauzeringizda saqlanadi</p>
                                 <p><i class="fas fa-clock"></i> Oxirgi zaxira: <span id="lastBackup">-</span></p>
                             </div>
                             <div class="backup-actions">
@@ -213,7 +161,7 @@
         </main>
     </div>
 
-    <!-- ===== CHEK PREVIEW MODAL ===== -->
+    <!-- ===== RECEIPT PREVIEW MODAL ===== -->
     <div class="modal-overlay" id="receiptPreviewModal">
         <div class="modal-content receipt-preview">
             <div class="modal-header">
@@ -228,20 +176,11 @@
 
     <!-- ===== SCRIPTS ===== -->
     <script src="../data/database.js"></script>
-    <script src="../assets/js/utils.js"></script>
-    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/env.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="../assets/js/supabase.js"></script>
+    <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/settings.js"></script>
     <script src="../assets/js/app.js"></script>
-    <script src="../assets/js/sidebar-toggle.js"></script>`n    <script src="../assets/js/theme.js"></script>`n</body>
-</html><!-- Supabase JS -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="../assets/js/supabase.js"></script>
-<!-- ENV va Supabase -->
-<script src="../assets/js/env.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="../assets/js/supabase.js"></script>
-<!-- Favicon -->
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏷️</text></svg>">
-
-
-
+</body>
+</html>

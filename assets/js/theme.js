@@ -1,38 +1,68 @@
-﻿// ===== THEME.JS - GRAFIKA YANGILASH =====
+﻿// ===== THEME.JS - DARK/LIGHT REJIM =====
 
-// ===== GRAFIKALARNI YANGILASH =====
-function updateChartsTheme(theme) {
-    try {
-        if (typeof Chart === 'undefined' || !Chart.instances) return;
-        
-        var textColor = theme === 'light' ? '#555' : '#A0A0B8';
-        var gridColor = theme === 'light' ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)';
-        var borderColor = theme === 'light' ? '#e8e8f0' : 'rgba(255,255,255,0.06)';
-        
-        for (var i = 0; i < Chart.instances.length; i++) {
-            var chart = Chart.instances[i];
-            if (chart && chart.options) {
-                // Legend
-                if (chart.options.plugins && chart.options.plugins.legend) {
-                    if (chart.options.plugins.legend.labels) {
-                        chart.options.plugins.legend.labels.color = textColor;
-                    }
-                }
-                // Scales
-                if (chart.options.scales) {
-                    if (chart.options.scales.x) {
-                        if (chart.options.scales.x.ticks) chart.options.scales.x.ticks.color = textColor;
-                        if (chart.options.scales.x.grid) chart.options.scales.x.grid.color = gridColor;
-                    }
-                    if (chart.options.scales.y) {
-                        if (chart.options.scales.y.ticks) chart.options.scales.y.ticks.color = textColor;
-                        if (chart.options.scales.y.grid) chart.options.scales.y.grid.color = gridColor;
-                    }
-                }
-                chart.update();
-            }
+var currentTheme = 'dark';
+
+function toggleTheme() {
+    var body = document.body;
+    var icon = document.querySelector('#themeToggle i');
+    
+    if (body.classList.contains('light-theme')) {
+        body.classList.remove('light-theme');
+        body.classList.add('dark-theme');
+        currentTheme = 'dark';
+        if (icon) {
+            icon.className = 'fas fa-moon';
+            icon.style.transform = 'rotate(360deg)';
+            setTimeout(function() {
+                icon.style.transform = 'rotate(0deg)';
+            }, 400);
         }
-    } catch(e) {
-        console.log('Grafik yangilashda xatolik:', e);
+        localStorage.setItem('salimboy_theme', 'dark');
+        showNotification('🌙 Dark rejim yoqildi', 'info');
+    } else {
+        body.classList.remove('dark-theme');
+        body.classList.add('light-theme');
+        currentTheme = 'light';
+        if (icon) {
+            icon.className = 'fas fa-sun';
+            icon.style.transform = 'rotate(360deg)';
+            setTimeout(function() {
+                icon.style.transform = 'rotate(0deg)';
+            }, 400);
+        }
+        localStorage.setItem('salimboy_theme', 'light');
+        showNotification('☀️ Light rejim yoqildi', 'info');
     }
 }
+
+function loadTheme() {
+    try {
+        var saved = localStorage.getItem('salimboy_theme') || 'dark';
+        var body = document.body;
+        var icon = document.querySelector('#themeToggle i');
+        
+        if (saved === 'light') {
+            body.classList.remove('dark-theme');
+            body.classList.add('light-theme');
+            if (icon) icon.className = 'fas fa-sun';
+            currentTheme = 'light';
+        } else {
+            body.classList.remove('light-theme');
+            body.classList.add('dark-theme');
+            if (icon) icon.className = 'fas fa-moon';
+            currentTheme = 'dark';
+        }
+    } catch(e) {
+        console.log('Tema yuklashda xatolik:', e);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadTheme();
+    var btn = document.getElementById('themeToggle');
+    if (btn) {
+        btn.addEventListener('click', toggleTheme);
+    }
+});
+
+console.log('✅ Theme.js yuklandi!');

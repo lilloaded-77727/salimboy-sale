@@ -10,7 +10,6 @@
     
     <link rel="stylesheet" href="../assets/css/style.css" />
     <link rel="stylesheet" href="../assets/css/sidebar.css" />
-    <link rel="stylesheet" href="../assets/css/employees.css" />
     <link rel="stylesheet" href="../assets/css/responsive.css" />
 </head>
 <body>
@@ -48,7 +47,7 @@
                     <i class="fas fa-ellipsis-v"></i>
                 </div>
             </div>
-        </aside>`n    <!-- Sidebar overlay -->`n    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+        </aside>
 
         <!-- ===== MAIN CONTENT ===== -->
         <main class="main-content employees-main">
@@ -59,10 +58,11 @@
                     <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
                     <h2><i class="fas fa-users"></i> Hodimlar</h2>
                 </div>
-                <div class="header-right">`n                    <button class="icon-btn" id="themeToggle" onclick="toggleTheme()">`n                        <i class="fas fa-moon"></i>`n                    </button>
+                <div class="header-right">
                     <button class="btn-add" onclick="openAddEmployeeModal()">
                         <i class="fas fa-user-plus"></i> Hodim qo'shish
                     </button>
+                    <button class="icon-btn" id="themeToggle"><i class="fas fa-moon"></i></button>
                     <div class="header-date">
                         <i class="fas fa-calendar-alt"></i>
                         <span id="currentDate"></span>
@@ -70,10 +70,10 @@
                 </div>
             </header>
 
-            <!-- ===== HODIMLAR CONTENT ===== -->
+            <!-- ===== EMPLOYEES CONTENT ===== -->
             <section class="employees-content">
                 
-                <!-- ===== HODIM QO'SHISH MODAL ===== -->
+                <!-- Add Employee Modal -->
                 <div class="modal-overlay" id="addEmployeeModal">
                     <div class="modal-content employee-modal">
                         <div class="modal-header">
@@ -82,11 +82,11 @@
                         </div>
                         <div class="modal-body">
                             <div class="form-group">
-                                <label><i class="fas fa-user"></i> Ismi *</label>
-                                <input type="text" id="empName" class="form-control" placeholder="To'liq ismi" required />
+                                <label><i class="fas fa-user"></i> Ismi</label>
+                                <input type="text" id="empName" class="form-control" placeholder="To'liq ismi" />
                             </div>
                             <div class="form-group">
-                                <label><i class="fas fa-briefcase"></i> Lavozimi *</label>
+                                <label><i class="fas fa-briefcase"></i> Lavozimi</label>
                                 <select id="empPosition" class="form-control">
                                     <option value="kassir">Kassir</option>
                                     <option value="sotuvchi">Sotuvchi</option>
@@ -97,21 +97,20 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label><i class="fas fa-money-bill"></i> Oylik maosh *</label>
-                                <input type="number" id="empSalary" class="form-control" placeholder="0" required />
+                                <label><i class="fas fa-money-bill"></i> Oylik</label>
+                                <input type="number" id="empSalary" class="form-control" placeholder="0" />
                             </div>
                             <div class="form-group">
-                                <label><i class="fas fa-phone"></i> Telefon raqami</label>
+                                <label><i class="fas fa-phone"></i> Telefon</label>
                                 <input type="tel" id="empPhone" class="form-control" placeholder="+998 90 123 45 67" />
                             </div>
                             <div class="form-group">
-                                <label><i class="fas fa-home"></i> Manzili</label>
+                                <label><i class="fas fa-home"></i> Manzil</label>
                                 <input type="text" id="empAddress" class="form-control" placeholder="Manzili" />
                             </div>
                             <div class="form-group">
-                                <label><i class="fas fa-key"></i> Kassir kodi (4 xonali)</label>
+                                <label><i class="fas fa-key"></i> Kassir kodi</label>
                                 <input type="password" id="empCode" class="form-control" placeholder="****" maxlength="4" />
-                                <small style="color:#999;font-size:11px;">Faqat kassir lavozimi uchun</small>
                             </div>
                             <button class="btn-primary" onclick="addEmployee()" style="width:100%;">
                                 <i class="fas fa-save"></i> Hodimni saqlash
@@ -120,7 +119,7 @@
                     </div>
                 </div>
 
-                <!-- ===== HODIM TAXRIRLASH MODAL ===== -->
+                <!-- Edit Employee Modal -->
                 <div class="modal-overlay" id="editEmployeeModal">
                     <div class="modal-content employee-modal">
                         <div class="modal-header">
@@ -130,8 +129,8 @@
                         <div class="modal-body">
                             <input type="hidden" id="editEmpId" />
                             <div class="form-group">
-                                <label><i class="fas fa-user"></i> Ismi *</label>
-                                <input type="text" id="editEmpName" class="form-control" required />
+                                <label><i class="fas fa-user"></i> Ismi</label>
+                                <input type="text" id="editEmpName" class="form-control" />
                             </div>
                             <div class="form-group">
                                 <label><i class="fas fa-briefcase"></i> Lavozimi</label>
@@ -145,28 +144,28 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label><i class="fas fa-money-bill"></i> Oylik maosh *</label>
-                                <input type="number" id="editEmpSalary" class="form-control" required />
+                                <label><i class="fas fa-money-bill"></i> Oylik</label>
+                                <input type="number" id="editEmpSalary" class="form-control" />
                             </div>
                             <div class="form-group">
-                                <label><i class="fas fa-phone"></i> Telefon raqami</label>
+                                <label><i class="fas fa-phone"></i> Telefon</label>
                                 <input type="tel" id="editEmpPhone" class="form-control" />
                             </div>
                             <div class="form-group">
-                                <label><i class="fas fa-home"></i> Manzili</label>
+                                <label><i class="fas fa-home"></i> Manzil</label>
                                 <input type="text" id="editEmpAddress" class="form-control" />
                             </div>
                             <button class="btn-primary" onclick="updateEmployee()" style="width:100%;">
                                 <i class="fas fa-save"></i> Yangilash
                             </button>
-                            <button class="btn-danger" onclick="deleteEmployee()" style="width:100%;margin-top:8px;">
-                                <i class="fas fa-trash"></i> Hodimni o'chirish
+                            <button class="btn-danger" onclick="deleteEmployeeFromModal()" style="width:100%;margin-top:8px;">
+                                <i class="fas fa-trash"></i> O'chirish
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- ===== STATISTIKA KARTALARI ===== -->
+                <!-- Stats -->
                 <div class="stats-grid employees-stats">
                     <div class="stat-card stat-purple">
                         <div class="stat-icon"><i class="fas fa-users"></i></div>
@@ -198,7 +197,7 @@
                     </div>
                 </div>
 
-                <!-- ===== HODIMLAR JADVALI ===== -->
+                <!-- Employees Table -->
                 <div class="table-card">
                     <div class="table-header">
                         <h3><i class="fas fa-list"></i> Hodimlar ro'yxati</h3>
@@ -228,20 +227,11 @@
 
     <!-- ===== SCRIPTS ===== -->
     <script src="../data/database.js"></script>
-    <script src="../assets/js/utils.js"></script>
-    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/env.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="../assets/js/supabase.js"></script>
+    <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/employees.js"></script>
     <script src="../assets/js/app.js"></script>
-    <script src="../assets/js/sidebar-toggle.js"></script>`n    <script src="../assets/js/theme.js"></script>`n</body>
-</html><!-- Supabase JS -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="../assets/js/supabase.js"></script>
-<!-- ENV va Supabase -->
-<script src="../assets/js/env.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="../assets/js/supabase.js"></script>
-<!-- Favicon -->
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏷️</text></svg>">
-
-
-
+</body>
+</html>

@@ -1,36 +1,26 @@
-// ===== DEBTORS.JS - TO'LIQ NASIYA LOGIKASI (TUZATILGAN) =====
+// ===== DEBTORS.JS - NASIYA LOGIKASI =====
 
 // ===== DOM READY =====
 document.addEventListener('DOMContentLoaded', function() {
     try {
-        // Sanani ko'rsatish
         var dateEl = document.getElementById('currentDate');
         if (dateEl) {
             var now = new Date();
             dateEl.textContent = now.toLocaleDateString('uz-UZ', {
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric', 
-                weekday: 'long'
+                year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
             });
         }
-
-        // Qarzdorlarni yuklash
+        
+        // DB ni yuklash
+        if (typeof loadDB === 'function') {
+            loadDB();
+        }
+        
         loadDebtors();
-
-        // Statistikani yuklash
         loadDebtorStats();
-
-        // Sidebar toggle
-        var menuToggle = document.getElementById('menuToggle');
-        var sidebar = document.getElementById('sidebar');
-        if (menuToggle && sidebar) {
-            menuToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('open');
-            });
-        }
-
+        
         console.log('✅ Debtors.js yuklandi!');
+        console.log('📊 Qarzdorlar soni:', DB ? DB.debtors.length : 0);
     } catch(e) {
         console.log('Debtors.js yuklashda xatolik:', e);
     }
@@ -41,22 +31,15 @@ function loadDebtors(filter) {
     try {
         var tbody = document.getElementById('debtorsTableBody');
         if (!tbody) return;
-
-        if (typeof DB === 'undefined' || !DB || !DB.debtors) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="8" style="text-align:center;padding:30px;color:#999;">
-                        <i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>
-                        Qarzdorlar mavjud emas
-                    </td>
-                </tr>
-            `;
+        
+        if (typeof DB === 'undefined' || !DB || !DB.debtors || DB.debtors.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text-muted);"><i class="fas fa-inbox" style="font-size:32px;display:block;margin-bottom:8px;opacity:0.5;"></i>Qarzdorlar mavjud emas</td></tr>';
             var countEl = document.getElementById('debtorCount');
             if (countEl) countEl.textContent = '0 ta';
             return;
         }
-
-        var debtors = DB.debtors.slice(); // Kopiya olish
+        
+        var debtors = DB.debtors.slice();
         
         // Qidiruv filtri
         if (filter) {
@@ -71,7 +54,7 @@ function loadDebtors(filter) {
             }
             debtors = filtered;
         }
-
+        
         // Holat filtri
         var statusFilter = document.getElementById('statusFilter');
         if (statusFilter && statusFilter.value) {
@@ -83,26 +66,19 @@ function loadDebtors(filter) {
             }
             debtors = filtered;
         }
-
-        // Sana bo'yicha saralash (eng yangisi birinchi)
+        
+        // Sana bo'yicha saralash
         debtors.sort(function(a, b) {
             return new Date(b.date) - new Date(a.date);
         });
-
+        
         if (debtors.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="8" style="text-align:center;padding:30px;color:#999;">
-                        <i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>
-                        Qarzdorlar topilmadi
-                    </td>
-                </tr>
-            `;
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text-muted);"><i class="fas fa-search" style="font-size:28px;display:block;margin-bottom:8px;opacity:0.5;"></i>Qarzdorlar topilmadi</td></tr>';
             var countEl = document.getElementById('debtorCount');
             if (countEl) countEl.textContent = '0 ta';
             return;
         }
-
+        
         var html = '';
         for (var i = 0; i < debtors.length; i++) {
             var d = debtors[i];
@@ -110,46 +86,28 @@ function loadDebtors(filter) {
             var statusClass = d.status === 'pending' ? 'status-pending' : 'status-paid';
             var statusText = d.status === 'pending' ? '🟡 Kutilmoqda' : '✅ To\'langan';
             
-            html += `
-                <tr>
-                    <td>${i + 1}</td>
-                    <td><strong>${d.name}</strong></td>
-                    <td>${d.phone || '-'}</td>
-                    <td>${d.address || '-'}</td>
-                    <td><strong>${formatPrice(d.amount)}</strong></td>
-                    <td>${date}</td>
-                    <td><span class="${statusClass}">${statusText}</span></td>
-                    <td>
-                        <div class="action-btns">
-                            ${d.status === 'pending' ? `
-                                <button class="btn-pay" onclick="openPaymentModal(${d.id})" style="padding:4px 12px;border:none;border-radius:6px;cursor:pointer;font-size:12px;background:rgba(46,204,113,0.12);color:#2ECC71;transition:all 0.3s;">
-                                    <i class="fas fa-money-bill-wave"></i> To'lash
-                                </button>
-                            ` : ''}
-                            <button class="btn-delete" onclick="deleteDebtor(${d.id})" style="padding:4px 10px;border:none;border-radius:6px;cursor:pointer;font-size:12px;background:rgba(231,76,60,0.12);color:#E74C3C;transition:all 0.3s;">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
+            html += '<tr>' +
+                '<td>' + (i + 1) + '</td>' +
+                '<td><strong>' + d.name + '</strong></td>' +
+                '<td>' + (d.phone || '-') + '</td>' +
+                '<td>' + (d.address || '-') + '</td>' +
+                '<td><strong>' + formatPrice(d.amount) + '</strong></td>' +
+                '<td>' + date + '</td>' +
+                '<td><span class="' + statusClass + '">' + statusText + '</span></td>' +
+                '<td><div class="action-btns">';
+            
+            if (d.status === 'pending') {
+                html += '<button class="btn-pay-sm" onclick="openPaymentModal(' + d.id + ')"><i class="fas fa-money-bill-wave"></i></button>';
+            }
+            
+            html += '<button class="btn-delete-sm" onclick="deleteDebtor(' + d.id + ')"><i class="fas fa-trash"></i></button>';
+            html += '</div></td></tr>';
         }
         tbody.innerHTML = html;
         var countEl = document.getElementById('debtorCount');
         if (countEl) countEl.textContent = debtors.length + ' ta';
     } catch(e) {
         console.log('Qarzdorlarni yuklashda xatolik:', e);
-        var tbody = document.getElementById('debtorsTableBody');
-        if (tbody) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="8" style="text-align:center;padding:30px;color:#999;">
-                        <i class="fas fa-exclamation-triangle" style="font-size:24px;display:block;margin-bottom:8px;"></i>
-                        Xatolik yuz berdi
-                    </td>
-                </tr>
-            `;
-        }
     }
 }
 
@@ -157,24 +115,19 @@ function loadDebtors(filter) {
 function loadDebtorStats() {
     try {
         if (typeof DB === 'undefined' || !DB || !DB.debtors) {
-            var totalEl = document.getElementById('totalDebtors');
-            var debtEl = document.getElementById('totalDebt');
-            var paidEl = document.getElementById('paidDebt');
-            var pendingEl = document.getElementById('pendingDebt');
-            
-            if (totalEl) totalEl.textContent = '0';
-            if (debtEl) debtEl.textContent = '0 so\'m';
-            if (paidEl) paidEl.textContent = '0 so\'m';
-            if (pendingEl) pendingEl.textContent = '0 so\'m';
+            document.getElementById('totalDebtors').textContent = '0';
+            document.getElementById('totalDebt').textContent = '0 so\'m';
+            document.getElementById('paidDebt').textContent = '0 so\'m';
+            document.getElementById('pendingDebt').textContent = '0 so\'m';
             return;
         }
-
+        
         var debtors = DB.debtors;
         var totalDebt = 0;
         var paidDebt = 0;
         var pendingDebt = 0;
         var count = 0;
-
+        
         for (var i = 0; i < debtors.length; i++) {
             var d = debtors[i];
             totalDebt += d.amount || 0;
@@ -185,29 +138,20 @@ function loadDebtorStats() {
                 count++;
             }
         }
-
-        var totalEl = document.getElementById('totalDebtors');
-        var debtEl = document.getElementById('totalDebt');
-        var paidEl = document.getElementById('paidDebt');
-        var pendingEl = document.getElementById('pendingDebt');
-
-        if (totalEl) totalEl.textContent = count;
-        if (debtEl) debtEl.textContent = formatPrice(totalDebt);
-        if (paidEl) paidEl.textContent = formatPrice(paidDebt);
-        if (pendingEl) pendingEl.textContent = formatPrice(pendingDebt);
+        
+        document.getElementById('totalDebtors').textContent = count;
+        document.getElementById('totalDebt').textContent = formatPrice(totalDebt);
+        document.getElementById('paidDebt').textContent = formatPrice(paidDebt);
+        document.getElementById('pendingDebt').textContent = formatPrice(pendingDebt);
     } catch(e) {
-        console.log('Qarzdor statistikasini yuklashda xatolik:', e);
+        console.log('Qarzdor statistikasida xatolik:', e);
     }
 }
 
 // ===== QIDIRUV =====
 function searchDebtors() {
-    try {
-        var query = document.getElementById('debtorSearch');
-        loadDebtors(query ? query.value : '');
-    } catch(e) {
-        console.log('Qidiruvda xatolik:', e);
-    }
+    var query = document.getElementById('debtorSearch').value;
+    loadDebtors(query);
 }
 
 // ===== TO'LOV MODAL =====
@@ -230,19 +174,18 @@ function openPaymentModal(id) {
             showNotification('⚠️ Qarzdor topilmadi!', 'error');
             return;
         }
-
-        var idEl = document.getElementById('payDebtorId');
-        var nameEl = document.getElementById('payDebtorName');
-        var remainingEl = document.getElementById('payRemaining');
-        var amountEl = document.getElementById('payAmount');
-        var modal = document.getElementById('paymentModal');
         
-        if (idEl) idEl.value = id;
-        if (nameEl) nameEl.value = debtor.name;
-        if (remainingEl) remainingEl.value = formatPrice(debtor.amount);
-        if (amountEl) amountEl.value = '';
-        if (modal) modal.classList.add('active');
-        if (amountEl) amountEl.focus();
+        document.getElementById('payDebtorId').value = id;
+        document.getElementById('payDebtorName').value = debtor.name;
+        document.getElementById('payRemaining').value = formatPrice(debtor.amount);
+        document.getElementById('payAmount').value = '';
+        
+        var modal = document.getElementById('paymentModal');
+        if (modal) {
+            modal.classList.add('active');
+            var amountInput = document.getElementById('payAmount');
+            if (amountInput) amountInput.focus();
+        }
     } catch(e) {
         console.log('To\'lov modalini ochishda xatolik:', e);
         showNotification('⚠️ Xatolik yuz berdi!', 'error');
@@ -250,38 +193,26 @@ function openPaymentModal(id) {
 }
 
 function closePaymentModal() {
-    try {
-        var modal = document.getElementById('paymentModal');
-        if (modal) modal.classList.remove('active');
-    } catch(e) {
-        console.log('Modal yopishda xatolik:', e);
-    }
+    var modal = document.getElementById('paymentModal');
+    if (modal) modal.classList.remove('active');
 }
 
 // ===== TO'LOVNI AMALGA OSHIRISH =====
 function processPayment() {
     try {
-        var idEl = document.getElementById('payDebtorId');
-        var amountEl = document.getElementById('payAmount');
+        var id = parseInt(document.getElementById('payDebtorId').value);
+        var amount = parseFloat(document.getElementById('payAmount').value);
         
-        if (!idEl || !amountEl) {
-            showNotification('⚠️ Forma elementlari topilmadi!', 'error');
-            return;
-        }
-        
-        var id = parseInt(idEl.value);
-        var amount = parseFloat(amountEl.value);
-
         if (!amount || amount <= 0) {
             showNotification('⚠️ Iltimos, to\'g\'ri summa kiriting!', 'warning');
             return;
         }
-
+        
         if (typeof DB === 'undefined' || !DB || !DB.debtors) {
             showNotification('⚠️ Qarzdorlar mavjud emas!', 'error');
             return;
         }
-
+        
         var debtor = null;
         var debtorIndex = -1;
         for (var i = 0; i < DB.debtors.length; i++) {
@@ -296,16 +227,16 @@ function processPayment() {
             showNotification('⚠️ Qarzdor topilmadi!', 'error');
             return;
         }
-
+        
         if (amount > debtor.amount) {
             showNotification('⚠️ Qarz summasidan katta to\'lov kiritdingiz!', 'warning');
             return;
         }
-
+        
         // Qarzni kamaytirish
         debtor.amount -= amount;
         
-        // To'lov tarixiga qo'shish
+        // To'lov tarixi
         if (!DB.debtPayments) DB.debtPayments = [];
         DB.debtPayments.push({
             id: Date.now() + Math.floor(Math.random() * 1000),
@@ -314,7 +245,7 @@ function processPayment() {
             amount: amount,
             date: new Date().toISOString()
         });
-
+        
         // Agar qarz to'liq to'langan bo'lsa
         if (debtor.amount <= 0) {
             debtor.status = 'paid';
@@ -323,14 +254,14 @@ function processPayment() {
         } else {
             showNotification('✅ ' + formatPrice(amount) + ' to\'lov qabul qilindi. Qolgan: ' + formatPrice(debtor.amount), 'success');
         }
-
+        
         saveDB();
         closePaymentModal();
         loadDebtors();
         loadDebtorStats();
     } catch(e) {
         console.log('To\'lovni amalga oshirishda xatolik:', e);
-        showNotification('⚠️ Xatolik yuz berdi!', 'error');
+        showNotification('⚠️ Xatolik yuz berdi: ' + e.message, 'error');
     }
 }
 
@@ -354,11 +285,11 @@ function deleteDebtor(id) {
             showNotification('⚠️ Qarzdor topilmadi!', 'error');
             return;
         }
-
+        
         if (!confirm('"' + debtor.name + '" qarzdorini o\'chirishga ishonchingiz komilmi?')) {
             return;
         }
-
+        
         var newDebtors = [];
         for (var i = 0; i < DB.debtors.length; i++) {
             if (DB.debtors[i].id !== id) {
@@ -366,14 +297,14 @@ function deleteDebtor(id) {
             }
         }
         DB.debtors = newDebtors;
-        
         saveDB();
+        
         loadDebtors();
         loadDebtorStats();
         showNotification('🗑️ "' + debtor.name + '" o\'chirildi!', 'info');
     } catch(e) {
         console.log('Qarzdor o\'chirishda xatolik:', e);
-        showNotification('⚠️ Xatolik yuz berdi!', 'error');
+        showNotification('⚠️ Xatolik yuz berdi: ' + e.message, 'error');
     }
 }
 
@@ -384,7 +315,7 @@ function exportDebtors() {
             showNotification('⚠️ Eksport uchun ma\'lumot yo\'q!', 'warning');
             return;
         }
-
+        
         var debtors = DB.debtors;
         var data = [];
         for (var i = 0; i < debtors.length; i++) {
@@ -398,12 +329,8 @@ function exportDebtors() {
                 'Holat': d.status === 'pending' ? 'Kutilmoqda' : 'To\'langan'
             });
         }
-
-        if (typeof window.exportToCSV === 'function') {
-            window.exportToCSV(data, 'nasiya_qarzdorlar_' + new Date().toISOString().slice(0,10) + '.csv');
-        } else {
-            exportToCSV(data, 'nasiya_qarzdorlar_' + new Date().toISOString().slice(0,10) + '.csv');
-        }
+        
+        exportToCSV(data, 'nasiya_qarzdorlar_' + new Date().toISOString().slice(0,10) + '.csv');
         showNotification('✅ Nasiya hisoboti eksport qilindi!', 'success');
     } catch(e) {
         console.log('Eksportda xatolik:', e);
@@ -411,41 +338,7 @@ function exportDebtors() {
     }
 }
 
-// ===== CSV EKSPORT =====
-function exportToCSV(data, filename) {
-    try {
-        if (!data || data.length === 0) return;
-        
-        var headers = Object.keys(data[0]);
-        var csvRows = [];
-        csvRows.push(headers.join(','));
-        
-        for (var i = 0; i < data.length; i++) {
-            var row = data[i];
-            var values = [];
-            for (var j = 0; j < headers.length; j++) {
-                var val = row[headers[j]] || '';
-                values.push('"' + String(val).replace(/"/g, '""') + '"');
-            }
-            csvRows.push(values.join(','));
-        }
-        
-        var blob = new Blob(['\uFEFF' + csvRows.join('\n')], { type: 'text/csv;charset=utf-8' });
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    } catch(e) {
-        console.log('CSV eksportida xatolik:', e);
-        showNotification('⚠️ Eksportda xatolik yuz berdi!', 'error');
-    }
-}
-
-// ===== QO'SHIMCHA FUNKSIYALAR =====
+// ===== QO'SHIMCHA =====
 function formatPrice(amount) {
     if (!amount) return '0 so\'m';
     return amount.toLocaleString('uz-UZ') + ' so\'m';
@@ -453,76 +346,39 @@ function formatPrice(amount) {
 
 function saveDB() {
     try {
-        if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('salimboy_db', JSON.stringify(DB));
-        }
+        localStorage.setItem('salimboy_db', JSON.stringify(DB));
+        console.log('💾 Ma\'lumotlar saqlandi!');
     } catch(e) {
         console.log('Ma\'lumotlar saqlanmadi:', e);
     }
 }
 
-// ===== GLOBAL NOTIFIKATSIYA =====
-function showNotification(message, type) {
-    type = type || 'info';
+function exportToCSV(data, filename) {
+    if (!data || data.length === 0) return;
     
-    // Global showNotification mavjud bo'lsa
-    if (typeof window.showNotification === 'function') {
-        window.showNotification(message, type);
-        return;
+    var headers = Object.keys(data[0]);
+    var csvRows = [];
+    csvRows.push(headers.join(','));
+    
+    for (var i = 0; i < data.length; i++) {
+        var row = data[i];
+        var values = [];
+        for (var j = 0; j < headers.length; j++) {
+            var val = row[headers[j]] || '';
+            values.push('"' + String(val).replace(/"/g, '""') + '"');
+        }
+        csvRows.push(values.join(','));
     }
     
-    var colors = {
-        success: '#2ECC71',
-        error: '#E74C3C',
-        warning: '#F39C12',
-        info: '#6C63FF'
-    };
-    
-    var notification = document.createElement('div');
-    notification.className = 'custom-notification';
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 16px 24px;
-        background: #FFFFFF;
-        border-left: 4px solid ${colors[type]};
-        border-radius: 12px;
-        color: #1A1A2E;
-        font-family: 'Inter', sans-serif;
-        font-size: 14px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-        z-index: 99999;
-        animation: slideInRight 0.4s ease;
-        max-width: 420px;
-        border: 1px solid #EAEAEA;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    `;
-    
-    var iconMap = {
-        success: '✅',
-        error: '❌',
-        warning: '⚠️',
-        info: 'ℹ️'
-    };
-    
-    notification.innerHTML = `
-        <span style="font-size: 20px;">${iconMap[type] || 'ℹ️'}</span>
-        <span>${message}</span>
-    `;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(function() {
-        notification.style.animation = 'slideOutRight 0.4s ease forwards';
-        setTimeout(function() {
-            if (notification.parentNode) {
-                notification.remove();
-            }
-        }, 400);
-    }, 4000);
+    var blob = new Blob(['\uFEFF' + csvRows.join('\n')], { type: 'text/csv;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
-console.log('✅ Debtors.js to\'liq yuklandi!');
+console.log('✅ Debtors.js yuklandi!');

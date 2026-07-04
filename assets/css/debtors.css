@@ -1,332 +1,332 @@
-/* ===== NASIYA MAXSUS STILLARI ===== */
+/* ============================================================
+   SALIMBOY SALE - NASIYA DIZAYNI
+   ============================================================ */
 
 .debtors-main {
-    padding: 16px 20px;
-    background: #F5F6FA;
+    padding: 0 !important;
 }
 
+/* ===== HEADER ===== */
 .debtors-header {
-    background: #FFFFFF !important;
-    border: 1px solid #EAEAEA !important;
-    margin-bottom: 20px !important;
-    padding: 12px 24px !important;
+    margin-bottom: 16px !important;
+    flex-wrap: wrap;
+    gap: 8px;
 }
+
 .debtors-header h2 {
     font-size: 18px;
-    color: #1A1A2E;
+    color: var(--text-primary);
     margin: 0;
-}
-.debtors-header h2 i {
-    color: var(--danger);
-    margin-right: 8px;
-}
-
-/* ===== STATISTIKA ===== */
-.debtors-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 20px;
-}
-.debtors-stats .stat-card {
-    padding: 16px 20px;
-}
-.debtors-stats .stat-card .stat-number {
-    font-size: 18px;
-}
-
-/* ===== QIDIRUV ===== */
-.debtors-search {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-}
-.debtors-search .search-box {
-    flex: 1;
-    min-width: 200px;
     display: flex;
     align-items: center;
-    background: #FFFFFF;
-    border-radius: 10px;
-    padding: 0 16px;
-    border: 1px solid #EAEAEA;
-    transition: var(--transition);
+    gap: 8px;
 }
-.debtors-search .search-box:focus-within {
-    border-color: var(--primary);
+
+.debtors-header h2 i {
+    color: var(--danger);
 }
-.debtors-search .search-box i {
-    color: #999;
-    margin-right: 12px;
-}
-.debtors-search .search-box input {
-    flex: 1;
-    border: none;
-    background: none;
-    padding: 10px 0;
-    font-size: 14px;
-    outline: none;
-    font-family: 'Inter', sans-serif;
-}
-.filter-group select {
-    padding: 10px 16px;
-    border: 1px solid #EAEAEA;
-    border-radius: 10px;
-    background: #FFFFFF;
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    color: #555;
-    outline: none;
-    cursor: pointer;
-}
-.filter-group select:focus {
-    border-color: var(--primary);
-}
+
 .btn-export {
-    padding: 10px 20px;
-    background: var(--success);
-    color: #fff;
+    padding: 8px 20px;
+    background: linear-gradient(135deg, #2ECC71, #27AE60);
     border: none;
-    border-radius: 10px;
+    border-radius: 50px;
+    color: #fff;
     font-weight: 600;
+    font-size: 12px;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
     gap: 6px;
+    box-shadow: 0 4px 20px rgba(46, 204, 113, 0.15);
 }
+
 .btn-export:hover {
     transform: scale(1.03);
-    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+    box-shadow: 0 8px 30px rgba(46, 204, 113, 0.25);
 }
 
-/* ===== MODAL ===== */
-.modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(8px);
-    z-index: 9999;
-    justify-content: center;
-    align-items: center;
-    animation: fadeIn 0.3s ease;
-}
-.modal-overlay.active {
-    display: flex;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-.modal-content {
-    background: #FFFFFF;
-    border-radius: 20px;
-    max-width: 460px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
-    animation: slideUp 0.3s ease;
-}
-@keyframes slideUp {
-    from { transform: translateY(30px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 24px;
-    border-bottom: 1px solid #EAEAEA;
-}
-.modal-header h3 {
-    font-size: 18px;
-    color: #1A1A2E;
-    margin: 0;
-}
-.modal-header h3 i {
-    color: var(--primary);
-    margin-right: 8px;
-}
-.modal-close {
-    background: none;
-    border: none;
-    font-size: 28px;
-    color: #999;
-    cursor: pointer;
-    transition: var(--transition);
-}
-.modal-close:hover {
-    color: var(--danger);
-    transform: rotate(90deg);
-}
-
-.modal-body {
-    padding: 24px;
-}
-.form-group {
+/* ===== STATS ===== */
+.debtors-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
     margin-bottom: 16px;
 }
-.form-group label {
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    color: #555;
-    margin-bottom: 6px;
-}
-.form-group label i {
-    color: var(--primary);
-    width: 20px;
-}
-.form-control {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1px solid #DDD;
-    border-radius: 10px;
-    font-size: 14px;
-    font-family: 'Inter', sans-serif;
-    transition: var(--transition);
-    background: #FAFAFA;
-}
-.form-control:focus {
-    outline: none;
-    border-color: var(--primary);
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
-}
-.form-control[readonly] {
-    background: #F0F0F0;
-    cursor: not-allowed;
+
+.debtors-stats .stat-card {
+    padding: 14px 18px;
 }
 
-/* ===== JADVAL ===== */
-.table-card {
-    background: #FFFFFF;
-    border-radius: var(--radius);
-    padding: 20px;
-    border: 1px solid #EAEAEA;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+.debtors-stats .stat-card .stat-number {
+    font-size: 18px;
 }
+
+/* ===== SEARCH ===== */
+.debtors-search {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.debtors-search .search-box {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 50px;
+    padding: 0 18px;
+    border: 1.5px solid var(--border-color);
+    transition: all 0.3s ease;
+    height: 44px;
+}
+
+.debtors-search .search-box:focus-within {
+    border-color: var(--primary);
+    background: rgba(108, 99, 255, 0.04);
+    box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.08);
+}
+
+.debtors-search .search-box i {
+    color: var(--text-muted);
+    margin-right: 12px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.debtors-search .search-box:focus-within i {
+    color: var(--primary);
+}
+
+.debtors-search .search-box input {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    padding: 10px 0;
+    font-size: 14px;
+    outline: none;
+    width: 100%;
+    height: 40px;
+    font-family: 'Inter', sans-serif;
+}
+
+.debtors-search .search-box input::placeholder {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.filter-group select {
+    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 44px;
+}
+
+.filter-group select:hover {
+    border-color: var(--primary);
+}
+
+.filter-group select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.06);
+}
+
+/* ===== STATUS ===== */
+.status-pending {
+    color: var(--danger);
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 50px;
+    background: rgba(231, 76, 60, 0.08);
+}
+
+.status-paid {
+    color: #2ECC71;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 50px;
+    background: rgba(46, 204, 113, 0.08);
+}
+
+/* ===== TABLE ===== */
+.table-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    border: 1px solid var(--border-color);
+}
+
 .table-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 12px;
 }
+
 .table-header h3 {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
-    color: #1A1A2E;
-    margin: 0;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
+
 .table-header h3 i {
-    margin-right: 8px;
     color: var(--danger);
 }
+
 .badge-count {
-    background: #F0F0F0;
+    background: rgba(255, 255, 255, 0.05);
     padding: 2px 12px;
     border-radius: 50px;
     font-size: 12px;
     font-weight: 600;
-    color: #555;
+    color: var(--text-muted);
 }
 
 .table-wrapper {
     overflow-x: auto;
 }
-.table-wrapper table {
+
+table {
     width: 100%;
     border-collapse: collapse;
     font-size: 13px;
 }
-.table-wrapper table th {
+
+table thead tr {
+    border-bottom: 1.5px solid var(--border-color);
+}
+
+table th {
     text-align: left;
-    padding: 8px 10px;
-    color: #999;
+    padding: 10px 12px;
+    color: var(--text-muted);
     font-weight: 500;
     font-size: 11px;
     text-transform: uppercase;
-    border-bottom: 1px solid #EAEAEA;
+    letter-spacing: 0.5px;
 }
-.table-wrapper table td {
-    padding: 8px 10px;
-    border-bottom: 1px solid #F5F5F7;
-    color: #555;
+
+table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-secondary);
 }
-.table-wrapper table tr:hover td {
-    background: #F8F9FC;
+
+table tbody tr {
+    transition: var(--transition);
 }
-.status-pending {
-    color: var(--danger);
+
+table tbody tr:hover {
+    background: rgba(108, 99, 255, 0.02);
+}
+
+table tbody tr td:first-child {
     font-weight: 600;
-    padding: 2px 10px;
-    border-radius: 50px;
-    background: rgba(231,76,60,0.12);
+    color: var(--text-primary);
 }
-.status-paid {
-    color: var(--success);
-    font-weight: 600;
-    padding: 2px 10px;
-    border-radius: 50px;
-    background: rgba(46,204,113,0.12);
-}
+
+/* ===== ACTION BUTTONS ===== */
 .action-btns {
     display: flex;
-    gap: 6px;
+    gap: 4px;
 }
-.action-btns .btn-pay {
-    padding: 4px 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: var(--transition);
-    background: rgba(46,204,113,0.12);
-    color: var(--success);
-}
-.action-btns .btn-pay:hover {
-    background: var(--success);
-    color: #fff;
-}
-.action-btns .btn-delete {
+
+.btn-pay-sm {
     padding: 4px 10px;
     border: none;
     border-radius: 6px;
-    cursor: pointer;
     font-size: 12px;
+    cursor: pointer;
     transition: var(--transition);
-    background: rgba(231,76,60,0.12);
-    color: var(--danger);
-}
-.action-btns .btn-delete:hover {
-    background: var(--danger);
-    color: #fff;
+    background: rgba(46, 204, 113, 0.15);
+    color: #2ECC71;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1200px) {
+.btn-pay-sm:hover {
+    background: #2ECC71;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.btn-delete-sm {
+    padding: 4px 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+    background: rgba(231, 76, 60, 0.15);
+    color: #E74C3C;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-delete-sm:hover {
+    background: #E74C3C;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+/* ============================================================
+   LIGHT THEME
+   ============================================================ */
+body.light-theme .debtors-search .search-box {
+    background: #f5f5f7;
+    border-color: #e8e8f0;
+}
+
+body.light-theme .debtors-search .search-box input {
+    color: #1a1a2e;
+}
+
+body.light-theme .debtors-search .search-box input::placeholder {
+    color: #999;
+}
+
+body.light-theme .debtors-search .search-box:focus-within {
+    background: #ffffff;
+}
+
+body.light-theme .filter-group select {
+    background: #f5f5f7;
+    border-color: #e8e8f0;
+    color: #1a1a2e;
+}
+
+body.light-theme .filter-group select:hover {
+    border-color: var(--primary);
+}
+
+body.light-theme .filter-group select:focus {
+    border-color: var(--primary);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
     .debtors-stats {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
 @media (max-width: 768px) {
-    .debtors-main {
-        padding: 8px;
-    }
-    .debtors-header {
-        flex-wrap: wrap;
-        gap: 8px;
-        padding: 12px 16px !important;
-    }
-    .debtors-header h2 {
-        font-size: 16px;
-    }
     .debtors-stats {
         grid-template-columns: 1fr 1fr;
         gap: 10px;
@@ -337,11 +337,36 @@
     .debtors-stats .stat-card .stat-number {
         font-size: 15px;
     }
-    .modal-content {
-        margin: 16px;
-        max-width: 100%;
+    .debtors-header {
+        flex-wrap: wrap;
     }
-    .table-wrapper table {
+    .debtors-header h2 {
+        font-size: 16px;
+    }
+    .btn-export {
+        font-size: 11px;
+        padding: 6px 14px;
+    }
+    table {
+        font-size: 12px;
         min-width: 650px;
+    }
+    table th,
+    table td {
+        padding: 8px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .debtors-stats {
+        grid-template-columns: 1fr;
+    }
+    .debtors-search .search-box input {
+        font-size: 12px;
+    }
+    .filter-group select {
+        font-size: 12px;
+        padding: 6px 10px;
+        height: 38px;
     }
 }

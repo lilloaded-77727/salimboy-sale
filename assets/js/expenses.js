@@ -1,36 +1,26 @@
-// ===== EXPENSES.JS - TO'LIQ RASHODLAR LOGIKASI (TUZATILGAN) =====
+﻿// ===== EXPENSES.JS - RASHODLAR LOGIKASI =====
 
 // ===== DOM READY =====
 document.addEventListener('DOMContentLoaded', function() {
     try {
-        // Sanani ko'rsatish
         var dateEl = document.getElementById('currentDate');
         if (dateEl) {
             var now = new Date();
             dateEl.textContent = now.toLocaleDateString('uz-UZ', {
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric', 
-                weekday: 'long'
+                year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
             });
         }
-
-        // Rashodlarni yuklash
+        
+        // DB ni yuklash
+        if (typeof loadDB === 'function') {
+            loadDB();
+        }
+        
         loadExpenses();
-
-        // Statistikani yuklash
         loadExpenseStats();
-
-        // Sidebar toggle
-        var menuToggle = document.getElementById('menuToggle');
-        var sidebar = document.getElementById('sidebar');
-        if (menuToggle && sidebar) {
-            menuToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('open');
-            });
-        }
-
+        
         console.log('✅ Expenses.js yuklandi!');
+        console.log('📊 Rashodlar soni:', DB ? DB.expenses.length : 0);
     } catch(e) {
         console.log('Expenses.js yuklashda xatolik:', e);
     }
@@ -38,62 +28,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ===== RASHOD QO'SHISH MODAL =====
 function openAddExpenseModal() {
-    try {
-        var modal = document.getElementById('addExpenseModal');
+    var modal = document.getElementById('addExpenseModal');
+    if (modal) {
+        modal.classList.add('active');
         var descInput = document.getElementById('expenseDescription');
-        if (modal) modal.classList.add('active');
         if (descInput) descInput.focus();
-    } catch(e) {
-        console.log('Modal ochishda xatolik:', e);
     }
 }
 
 function closeAddExpenseModal() {
-    try {
-        var modal = document.getElementById('addExpenseModal');
-        var descInput = document.getElementById('expenseDescription');
-        var amountInput = document.getElementById('expenseAmount');
-        var categorySelect = document.getElementById('expenseCategory');
-        var paymentSelect = document.getElementById('expensePaymentType');
-        
-        if (modal) modal.classList.remove('active');
-        if (descInput) descInput.value = '';
-        if (amountInput) amountInput.value = '';
-        if (categorySelect) categorySelect.value = 'ishchi';
-        if (paymentSelect) paymentSelect.value = 'cash';
-    } catch(e) {
-        console.log('Modal yopishda xatolik:', e);
-    }
+    var modal = document.getElementById('addExpenseModal');
+    if (modal) modal.classList.remove('active');
+    
+    document.getElementById('expenseDescription').value = '';
+    document.getElementById('expenseAmount').value = '';
+    document.getElementById('expenseCategory').value = 'ishchi';
+    document.getElementById('expensePaymentType').value = 'cash';
 }
 
 // ===== RASHOD QO'SHISH =====
 function addExpense() {
     try {
-        var descInput = document.getElementById('expenseDescription');
-        var amountInput = document.getElementById('expenseAmount');
-        var categorySelect = document.getElementById('expenseCategory');
-        var paymentSelect = document.getElementById('expensePaymentType');
+        var description = document.getElementById('expenseDescription').value.trim();
+        var amount = parseFloat(document.getElementById('expenseAmount').value);
+        var category = document.getElementById('expenseCategory').value;
+        var paymentType = document.getElementById('expensePaymentType').value;
         
-        if (!descInput || !amountInput || !categorySelect || !paymentSelect) {
-            showNotification('⚠️ Forma elementlari topilmadi!', 'error');
+        if (!description) {
+            showNotification('⚠️ Tavsifni kiriting!', 'warning');
+            return;
+        }
+        if (!amount || amount <= 0) {
+            showNotification('⚠️ Summani kiriting!', 'warning');
             return;
         }
         
-        var description = descInput.value.trim();
-        var amount = parseFloat(amountInput.value);
-        var category = categorySelect.value;
-        var paymentType = paymentSelect.value;
-
-        if (!description || !amount || amount <= 0) {
-            showNotification('⚠️ Iltimos, barcha maydonlarni to\'ldiring!', 'warning');
-            return;
-        }
-
         if (typeof DB === 'undefined' || !DB) {
             showNotification('⚠️ Ma\'lumotlar bazasi topilmadi!', 'error');
             return;
         }
-
+        
         var expense = {
             id: Date.now() + Math.floor(Math.random() * 1000),
             description: description,
@@ -102,17 +76,18 @@ function addExpense() {
             paymentType: paymentType,
             date: new Date().toISOString()
         };
-
+        
         if (!DB.expenses) DB.expenses = [];
         DB.expenses.push(expense);
         saveDB();
+        
         closeAddExpenseModal();
         loadExpenses();
         loadExpenseStats();
         showNotification('✅ Rashod qo\'shildi: ' + formatPrice(amount), 'success');
     } catch(e) {
         console.log('Rashod qo\'shishda xatolik:', e);
-        showNotification('⚠️ Xatolik yuz berdi!', 'error');
+        showNotification('⚠️ Xatolik yuz berdi: ' + e.message, 'error');
     }
 }
 
@@ -121,22 +96,15 @@ function loadExpenses(filter) {
     try {
         var tbody = document.getElementById('expensesTableBody');
         if (!tbody) return;
-
-        if (typeof DB === 'undefined' || !DB || !DB.expenses) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="7" style="text-align:center;padding:30px;color:#999;">
-                        <i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>
-                        Rashodlar mavjud emas
-                    </td>
-                </tr>
-            `;
+        
+        if (typeof DB === 'undefined' || !DB || !DB.expenses || DB.expenses.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text-muted);"><i class="fas fa-inbox" style="font-size:32px;display:block;margin-bottom:8px;opacity:0.5;"></i>Rashodlar mavjud emas</td></tr>';
             var countEl = document.getElementById('expenseCount');
             if (countEl) countEl.textContent = '0 ta';
             return;
         }
-
-        var expenses = DB.expenses.slice(); // Kopiya olish
+        
+        var expenses = DB.expenses.slice();
         
         // Qidiruv filtri
         if (filter) {
@@ -151,7 +119,7 @@ function loadExpenses(filter) {
             }
             expenses = filtered;
         }
-
+        
         // Kategoriya filtri
         var categoryFilter = document.getElementById('categoryFilter');
         if (categoryFilter && categoryFilter.value) {
@@ -163,7 +131,7 @@ function loadExpenses(filter) {
             }
             expenses = filtered;
         }
-
+        
         // To'lov turi filtri
         var paymentFilter = document.getElementById('paymentFilter');
         if (paymentFilter && paymentFilter.value) {
@@ -175,26 +143,19 @@ function loadExpenses(filter) {
             }
             expenses = filtered;
         }
-
-        // Sana bo'yicha saralash (eng yangisi birinchi)
+        
+        // Sana bo'yicha saralash
         expenses.sort(function(a, b) {
             return new Date(b.date) - new Date(a.date);
         });
-
+        
         if (expenses.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="7" style="text-align:center;padding:30px;color:#999;">
-                        <i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>
-                        Rashodlar topilmadi
-                    </td>
-                </tr>
-            `;
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text-muted);"><i class="fas fa-search" style="font-size:28px;display:block;margin-bottom:8px;opacity:0.5;"></i>Rashodlar topilmadi</td></tr>';
             var countEl = document.getElementById('expenseCount');
             if (countEl) countEl.textContent = '0 ta';
             return;
         }
-
+        
         var categoryNames = {
             'ishchi': 'Ishchi oylik',
             'komunal': 'Komunal',
@@ -204,13 +165,13 @@ function loadExpenses(filter) {
             'transport': 'Transport',
             'boshqa': 'Boshqa'
         };
-
+        
         var paymentNames = {
             'cash': 'Naxt',
             'plastic': 'Plastik',
             'account': 'Hisob raqam'
         };
-
+        
         var html = '';
         for (var i = 0; i < expenses.length; i++) {
             var e = expenses[i];
@@ -218,40 +179,21 @@ function loadExpenses(filter) {
             var categoryClass = e.category;
             var paymentClass = e.paymentType;
             
-            html += `
-                <tr>
-                    <td>${i + 1}</td>
-                    <td>${date}</td>
-                    <td><span class="category-badge ${categoryClass}">${categoryNames[e.category] || e.category}</span></td>
-                    <td>${e.description}</td>
-                    <td><strong>${formatPrice(e.amount)}</strong></td>
-                    <td><span class="payment-badge ${paymentClass}">${paymentNames[e.paymentType] || e.paymentType}</span></td>
-                    <td>
-                        <div class="action-btns">
-                            <button class="btn-delete" onclick="deleteExpense(${e.id})" style="padding:4px 10px;border:none;border-radius:6px;cursor:pointer;font-size:12px;background:rgba(231,76,60,0.12);color:#E74C3C;transition:all 0.3s;">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
+            html += '<tr>' +
+                '<td>' + (i + 1) + '</td>' +
+                '<td>' + date + '</td>' +
+                '<td><span class="category-badge ' + categoryClass + '">' + (categoryNames[e.category] || e.category) + '</span></td>' +
+                '<td>' + e.description + '</td>' +
+                '<td><strong>' + formatPrice(e.amount) + '</strong></td>' +
+                '<td><span class="payment-badge ' + paymentClass + '">' + (paymentNames[e.paymentType] || e.paymentType) + '</span></td>' +
+                '<td><button class="btn-delete-sm" onclick="deleteExpense(' + e.id + ')"><i class="fas fa-trash"></i></button></td>' +
+            '</tr>';
         }
         tbody.innerHTML = html;
         var countEl = document.getElementById('expenseCount');
         if (countEl) countEl.textContent = expenses.length + ' ta';
     } catch(e) {
         console.log('Rashodlarni yuklashda xatolik:', e);
-        var tbody = document.getElementById('expensesTableBody');
-        if (tbody) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="7" style="text-align:center;padding:30px;color:#999;">
-                        <i class="fas fa-exclamation-triangle" style="font-size:24px;display:block;margin-bottom:8px;"></i>
-                        Xatolik yuz berdi
-                    </td>
-                </tr>
-            `;
-        }
     }
 }
 
@@ -259,29 +201,24 @@ function loadExpenses(filter) {
 function loadExpenseStats() {
     try {
         if (typeof DB === 'undefined' || !DB || !DB.expenses) {
-            var totalEl = document.getElementById('totalExpenses');
-            var dailyEl = document.getElementById('dailyExpenses');
-            var monthlyEl = document.getElementById('monthlyExpenses');
-            var yearlyEl = document.getElementById('yearlyExpenses');
-            
-            if (totalEl) totalEl.textContent = '0 so\'m';
-            if (dailyEl) dailyEl.textContent = '0 so\'m';
-            if (monthlyEl) monthlyEl.textContent = '0 so\'m';
-            if (yearlyEl) yearlyEl.textContent = '0 so\'m';
+            document.getElementById('totalExpenses').textContent = '0 so\'m';
+            document.getElementById('dailyExpenses').textContent = '0 so\'m';
+            document.getElementById('monthlyExpenses').textContent = '0 so\'m';
+            document.getElementById('yearlyExpenses').textContent = '0 so\'m';
             return;
         }
-
+        
         var expenses = DB.expenses;
         var now = new Date();
         var today = now.toDateString();
         var currentMonth = now.getMonth();
         var currentYear = now.getFullYear();
-
+        
         var total = 0;
         var dailyTotal = 0;
         var monthlyTotal = 0;
         var yearlyTotal = 0;
-
+        
         for (var i = 0; i < expenses.length; i++) {
             var e = expenses[i];
             var date = new Date(e.date);
@@ -300,29 +237,20 @@ function loadExpenseStats() {
                 yearlyTotal += e.amount;
             }
         }
-
-        var totalEl = document.getElementById('totalExpenses');
-        var dailyEl = document.getElementById('dailyExpenses');
-        var monthlyEl = document.getElementById('monthlyExpenses');
-        var yearlyEl = document.getElementById('yearlyExpenses');
-
-        if (totalEl) totalEl.textContent = formatPrice(total);
-        if (dailyEl) dailyEl.textContent = formatPrice(dailyTotal);
-        if (monthlyEl) monthlyEl.textContent = formatPrice(monthlyTotal);
-        if (yearlyEl) yearlyEl.textContent = formatPrice(yearlyTotal);
+        
+        document.getElementById('totalExpenses').textContent = formatPrice(total);
+        document.getElementById('dailyExpenses').textContent = formatPrice(dailyTotal);
+        document.getElementById('monthlyExpenses').textContent = formatPrice(monthlyTotal);
+        document.getElementById('yearlyExpenses').textContent = formatPrice(yearlyTotal);
     } catch(e) {
-        console.log('Rashod statistikasini yuklashda xatolik:', e);
+        console.log('Rashod statistikasida xatolik:', e);
     }
 }
 
-// ===== RASHOD QIDIRUV =====
+// ===== QIDIRUV =====
 function searchExpenses() {
-    try {
-        var query = document.getElementById('expenseSearch');
-        loadExpenses(query ? query.value : '');
-    } catch(e) {
-        console.log('Qidiruvda xatolik:', e);
-    }
+    var query = document.getElementById('expenseSearch').value;
+    loadExpenses(query);
 }
 
 // ===== RASHOD O'CHIRISH =====
@@ -331,12 +259,12 @@ function deleteExpense(id) {
         if (!confirm('Ushbu rashodni o\'chirishga ishonchingiz komilmi?')) {
             return;
         }
-
+        
         if (typeof DB === 'undefined' || !DB || !DB.expenses) {
             showNotification('⚠️ Rashodlar mavjud emas!', 'error');
             return;
         }
-
+        
         var newExpenses = [];
         for (var i = 0; i < DB.expenses.length; i++) {
             if (DB.expenses[i].id !== id) {
@@ -345,16 +273,17 @@ function deleteExpense(id) {
         }
         DB.expenses = newExpenses;
         saveDB();
+        
         loadExpenses();
         loadExpenseStats();
         showNotification('🗑️ Rashod o\'chirildi!', 'info');
     } catch(e) {
         console.log('Rashod o\'chirishda xatolik:', e);
-        showNotification('⚠️ Xatolik yuz berdi!', 'error');
+        showNotification('⚠️ Xatolik yuz berdi: ' + e.message, 'error');
     }
 }
 
-// ===== QO'SHIMCHA FUNKSIYALAR =====
+// ===== QO'SHIMCHA =====
 function formatPrice(amount) {
     if (!amount) return '0 so\'m';
     return amount.toLocaleString('uz-UZ') + ' so\'m';
@@ -362,76 +291,11 @@ function formatPrice(amount) {
 
 function saveDB() {
     try {
-        if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('salimboy_db', JSON.stringify(DB));
-        }
+        localStorage.setItem('salimboy_db', JSON.stringify(DB));
+        console.log('💾 Ma\'lumotlar saqlandi!');
     } catch(e) {
         console.log('Ma\'lumotlar saqlanmadi:', e);
     }
 }
 
-// ===== GLOBAL NOTIFIKATSIYA =====
-function showNotification(message, type) {
-    type = type || 'info';
-    
-    // Global showNotification mavjud bo'lsa
-    if (typeof window.showNotification === 'function') {
-        window.showNotification(message, type);
-        return;
-    }
-    
-    var colors = {
-        success: '#2ECC71',
-        error: '#E74C3C',
-        warning: '#F39C12',
-        info: '#6C63FF'
-    };
-    
-    var notification = document.createElement('div');
-    notification.className = 'custom-notification';
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 16px 24px;
-        background: #FFFFFF;
-        border-left: 4px solid ${colors[type]};
-        border-radius: 12px;
-        color: #1A1A2E;
-        font-family: 'Inter', sans-serif;
-        font-size: 14px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-        z-index: 99999;
-        animation: slideInRight 0.4s ease;
-        max-width: 420px;
-        border: 1px solid #EAEAEA;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    `;
-    
-    var iconMap = {
-        success: '✅',
-        error: '❌',
-        warning: '⚠️',
-        info: 'ℹ️'
-    };
-    
-    notification.innerHTML = `
-        <span style="font-size: 20px;">${iconMap[type] || 'ℹ️'}</span>
-        <span>${message}</span>
-    `;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(function() {
-        notification.style.animation = 'slideOutRight 0.4s ease forwards';
-        setTimeout(function() {
-            if (notification.parentNode) {
-                notification.remove();
-            }
-        }, 400);
-    }, 4000);
-}
-
-console.log('✅ Expenses.js to\'liq yuklandi!');
+console.log('✅ Expenses.js yuklandi!');

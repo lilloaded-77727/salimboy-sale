@@ -1,208 +1,171 @@
-/* ===== HISOBOT MAXSUS STILLARI ===== */
+/* ============================================================
+   SALIMBOY SALE - HISOBOT DIZAYNI
+   ============================================================ */
 
 .reports-main {
-    padding: 16px 20px;
-    background: #F5F6FA;
+    padding: 0 !important;
 }
 
+/* ===== HEADER ===== */
 .reports-header {
-    background: #FFFFFF !important;
-    border: 1px solid #EAEAEA !important;
-    margin-bottom: 20px !important;
-    padding: 12px 24px !important;
+    margin-bottom: 16px !important;
+    flex-wrap: wrap;
+    gap: 8px;
 }
+
 .reports-header h2 {
     font-size: 18px;
-    color: #1A1A2E;
+    color: var(--text-primary);
     margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
+
 .reports-header h2 i {
     color: var(--primary);
-    margin-right: 8px;
 }
 
 .btn-export {
     padding: 8px 20px;
-    background: var(--success);
-    color: #fff;
+    background: linear-gradient(135deg, #2ECC71, #27AE60);
     border: none;
     border-radius: 50px;
+    color: #fff;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 12px;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
     gap: 6px;
-}
-.btn-export:hover {
-    transform: scale(1.03);
-    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+    box-shadow: 0 4px 20px rgba(46, 204, 113, 0.15);
 }
 
-/* ===== STATISTIKA ===== */
+.btn-export:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 30px rgba(46, 204, 113, 0.25);
+}
+
+/* ===== STATS ===== */
 .reports-stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: 14px;
+    margin-bottom: 16px;
 }
+
 .reports-stats .stat-card {
-    padding: 16px 20px;
+    padding: 14px 18px;
 }
+
 .reports-stats .stat-card .stat-number {
     font-size: 18px;
 }
 
 /* ===== CHARTS ===== */
-.charts-grid {
+.reports-charts {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 20px;
-}
-
-.chart-card {
-    background: #FFFFFF;
-    border-radius: var(--radius);
-    padding: 20px;
-    border: 1px solid #EAEAEA;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-.chart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    gap: 16px;
     margin-bottom: 16px;
 }
-.chart-header h3 {
-    font-size: 14px;
-    font-weight: 600;
-    color: #1A1A2E;
-    margin: 0;
-}
-.chart-header h3 i {
-    color: var(--primary);
-    margin-right: 8px;
-}
-.chart-body {
-    height: 250px;
-    position: relative;
+
+.reports-charts .chart-card {
+    padding: 16px 18px;
 }
 
-/* ===== TABLE ===== */
-.table-card {
-    background: #FFFFFF;
-    border-radius: var(--radius);
-    padding: 20px;
-    border: 1px solid #EAEAEA;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+.reports-charts .chart-body {
+    height: 200px;
 }
-.table-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-}
-.table-header h3 {
-    font-size: 14px;
-    font-weight: 600;
-    color: #1A1A2E;
-    margin: 0;
-}
-.table-header h3 i {
-    color: var(--primary);
-    margin-right: 8px;
-}
+
+/* ===== TABLE ACTIONS ===== */
 .table-actions {
     display: flex;
     gap: 8px;
     align-items: center;
 }
+
 .table-actions select {
     padding: 6px 14px;
-    border: 1px solid #EAEAEA;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1.5px solid var(--border-color);
     border-radius: 8px;
-    background: #F8F9FC;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    color: #555;
+    color: var(--text-secondary);
+    font-size: 12px;
     outline: none;
     cursor: pointer;
+    transition: var(--transition);
+    height: 36px;
 }
-.btn-print {
+
+.table-actions select:hover {
+    border-color: var(--primary);
+}
+
+.table-actions select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.06);
+}
+
+.btn-print-sm {
     padding: 6px 14px;
-    background: #F5F5F7;
-    border: 1px solid #EAEAEA;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1.5px solid var(--border-color);
     border-radius: 8px;
-    font-weight: 500;
-    font-size: 13px;
+    color: var(--text-secondary);
+    font-size: 12px;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
     gap: 4px;
+    height: 36px;
 }
-.btn-print:hover {
+
+.btn-print-sm:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(108, 99, 255, 0.04);
+}
+
+/* ============================================================
+   LIGHT THEME
+   ============================================================ */
+body.light-theme .table-actions select {
+    background: #f5f5f7;
+    border-color: #e8e8f0;
+    color: #1a1a2e;
+}
+
+body.light-theme .table-actions select:hover {
+    border-color: var(--primary);
+}
+
+body.light-theme .btn-print-sm {
+    background: #f5f5f7;
+    border-color: #e8e8f0;
+    color: #4a4a6a;
+}
+
+body.light-theme .btn-print-sm:hover {
     border-color: var(--primary);
     color: var(--primary);
 }
 
-.table-wrapper {
-    overflow-x: auto;
-}
-.table-wrapper table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-}
-.table-wrapper table th {
-    text-align: left;
-    padding: 8px 10px;
-    color: #999;
-    font-weight: 500;
-    font-size: 11px;
-    text-transform: uppercase;
-    border-bottom: 1px solid #EAEAEA;
-}
-.table-wrapper table td {
-    padding: 8px 10px;
-    border-bottom: 1px solid #F5F5F7;
-    color: #555;
-}
-.table-wrapper table tr:hover td {
-    background: #F8F9FC;
-}
-.status-completed {
-    color: var(--success);
-    font-weight: 600;
-}
-.status-pending {
-    color: var(--warning);
-    font-weight: 600;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1200px) {
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
     .reports-stats {
         grid-template-columns: repeat(2, 1fr);
     }
-    .charts-grid {
+    .reports-charts {
         grid-template-columns: 1fr;
     }
 }
+
 @media (max-width: 768px) {
-    .reports-main {
-        padding: 8px;
-    }
-    .reports-header {
-        flex-wrap: wrap;
-        gap: 8px;
-        padding: 12px 16px !important;
-    }
-    .reports-header h2 {
-        font-size: 16px;
-    }
     .reports-stats {
         grid-template-columns: 1fr 1fr;
         gap: 10px;
@@ -213,10 +176,47 @@
     .reports-stats .stat-card .stat-number {
         font-size: 15px;
     }
+    .reports-header {
+        flex-wrap: wrap;
+    }
+    .reports-header h2 {
+        font-size: 16px;
+    }
+    .btn-export {
+        font-size: 11px;
+        padding: 6px 14px;
+    }
     .table-actions {
         flex-wrap: wrap;
     }
-    .chart-body {
-        height: 180px;
+    .table-actions select {
+        font-size: 11px;
+        padding: 4px 10px;
+        height: 32px;
+    }
+    .btn-print-sm {
+        font-size: 11px;
+        padding: 4px 10px;
+        height: 32px;
+    }
+    .reports-charts .chart-body {
+        height: 160px;
+    }
+}
+
+@media (max-width: 480px) {
+    .reports-stats {
+        grid-template-columns: 1fr;
+    }
+    .reports-charts .chart-body {
+        height: 140px;
+    }
+    table {
+        font-size: 12px;
+        min-width: 600px;
+    }
+    table th,
+    table td {
+        padding: 6px 8px;
     }
 }

@@ -48,18 +48,18 @@
                     <i class="fas fa-ellipsis-v"></i>
                 </div>
             </div>
-        </aside>`n    <!-- Sidebar overlay -->`n    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+        </aside>
 
         <!-- ===== MAIN CONTENT ===== -->
         <main class="main-content cashier-main">
             
-            <!-- Header -->
+            <!-- ===== HEADER ===== -->
             <header class="top-header cashier-header">
                 <div class="header-left">
                     <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
                     <h2><i class="fas fa-cash-register"></i> Kassa</h2>
                 </div>
-                <div class="header-right">`n                    <button class="icon-btn" id="themeToggle" onclick="toggleTheme()">`n                        <i class="fas fa-moon"></i>`n                    </button>
+                <div class="header-right">
                     <div class="shift-status" id="shiftStatus">
                         <span class="status-dot closed"></span>
                         <span>Smena: Yopiq</span>
@@ -67,6 +67,7 @@
                     <button class="btn-shift closed" id="shiftBtn" onclick="toggleShift()">
                         <i class="fas fa-play"></i> Smena ochish
                     </button>
+                    <button class="icon-btn" id="themeToggle"><i class="fas fa-moon"></i></button>
                     <div class="header-date">
                         <i class="fas fa-calendar-alt"></i>
                         <span id="currentDate"></span>
@@ -74,10 +75,10 @@
                 </div>
             </header>
 
-            <!-- ===== KASSA CONTENT ===== -->
+            <!-- ===== CASHIER CONTENT ===== -->
             <section class="cashier-content">
                 
-                <!-- ===== SMENA OCHISH MODAL ===== -->
+                <!-- ===== SHIFT MODAL ===== -->
                 <div class="modal-overlay" id="shiftModal">
                     <div class="modal-content shift-modal">
                         <div class="modal-header">
@@ -92,7 +93,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label><i class="fas fa-key"></i> Kassir kodi (4 xonali)</label>
+                                <label><i class="fas fa-key"></i> Kassir kodi</label>
                                 <input type="password" id="cashierCode" class="form-control" placeholder="****" maxlength="4" />
                             </div>
                             <div class="form-group">
@@ -106,7 +107,7 @@
                     </div>
                 </div>
 
-                <!-- ===== NASIYA MODAL ===== -->
+                <!-- ===== DEBTOR MODAL ===== -->
                 <div class="modal-overlay" id="debtorModal">
                     <div class="modal-content debtor-modal">
                         <div class="modal-header">
@@ -115,20 +116,20 @@
                         </div>
                         <div class="modal-body">
                             <div class="form-group">
-                                <label><i class="fas fa-user"></i> Qarzdor ismi *</label>
-                                <input type="text" id="debtorName" class="form-control" placeholder="To'liq ismini kiriting" required />
+                                <label><i class="fas fa-user"></i> Qarzdor ismi</label>
+                                <input type="text" id="debtorName" class="form-control" placeholder="To'liq ismini kiriting" />
                             </div>
                             <div class="form-group">
-                                <label><i class="fas fa-phone"></i> Telefon raqami *</label>
-                                <input type="tel" id="debtorPhone" class="form-control" placeholder="+998 90 123 45 67" required />
+                                <label><i class="fas fa-phone"></i> Telefon raqami</label>
+                                <input type="tel" id="debtorPhone" class="form-control" placeholder="+998 90 123 45 67" />
                             </div>
                             <div class="form-group">
                                 <label><i class="fas fa-home"></i> Uy manzili</label>
-                                <input type="text" id="debtorAddress" class="form-control" placeholder="Toshkent, Chilonzor..." />
+                                <input type="text" id="debtorAddress" class="form-control" placeholder="Manzil..." />
                             </div>
                             <div class="form-group">
                                 <label><i class="fas fa-money-bill"></i> Qarz summasi</label>
-                                <input type="number" id="debtorAmount" class="form-control" placeholder="0" readonly />
+                                <input type="number" id="debtorAmount" class="form-control" readonly />
                             </div>
                             <button class="btn-primary" onclick="confirmDebtor()" style="width:100%;">
                                 <i class="fas fa-check"></i> Tasdiqlash
@@ -137,7 +138,30 @@
                     </div>
                 </div>
 
-                <!-- ===== KILO/OG'IRLIK MODAL ===== -->
+                <!-- ===== DISCOUNT MODAL ===== -->
+                <div class="modal-overlay" id="discountModal">
+                    <div class="modal-content discount-modal">
+                        <div class="modal-header">
+                            <h3><i class="fas fa-percent"></i> Skidka</h3>
+                            <button class="modal-close" onclick="closeDiscountModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label><i class="fas fa-percent"></i> Skidka foizi (%)</label>
+                                <input type="number" id="discountPercent" class="form-control" placeholder="0" min="0" max="100" />
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-money-bill"></i> Skidka summasi</label>
+                                <input type="number" id="discountAmount" class="form-control" readonly />
+                            </div>
+                            <button class="btn-primary" onclick="confirmDiscount()" style="width:100%;">
+                                <i class="fas fa-check"></i> Skidkani qo'llash
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== WEIGHT MODAL ===== -->
                 <div class="modal-overlay" id="weightModal">
                     <div class="modal-content weight-modal">
                         <div class="modal-header">
@@ -156,30 +180,7 @@
                     </div>
                 </div>
 
-                <!-- ===== SKIDKA MODAL ===== -->
-                <div class="modal-overlay" id="discountModal">
-                    <div class="modal-content discount-modal">
-                        <div class="modal-header">
-                            <h3><i class="fas fa-percent"></i> Skidka</h3>
-                            <button class="modal-close" onclick="closeDiscountModal()">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label><i class="fas fa-percent"></i> Skidka foizi (%)</label>
-                                <input type="number" id="discountPercent" class="form-control" placeholder="0" min="0" max="100" />
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-money-bill"></i> Skidka summasi</label>
-                                <input type="number" id="discountAmount" class="form-control" placeholder="0" readonly />
-                            </div>
-                            <button class="btn-primary" onclick="confirmDiscount()" style="width:100%;">
-                                <i class="fas fa-check"></i> Skidkani qo'llash
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ===== KASSA ASOSIY QISMI ===== -->
+                <!-- ===== CASHIER LAYOUT ===== -->
                 <div class="cashier-layout">
                     
                     <!-- ===== CHAP TOMON: MAHSULOTLAR ===== -->
@@ -187,7 +188,7 @@
                         <div class="product-search">
                             <div class="search-box">
                                 <i class="fas fa-search"></i>
-                                <input type="text" id="productSearch" placeholder="Mahsulot yoki shtrix-kod..." onkeyup="searchProducts()" />
+                                <input type="text" id="productSearch" placeholder="Mahsulot qidirish..." onkeyup="searchProducts()" />
                             </div>
                             <button class="btn-scanner" onclick="simulateScanner()">
                                 <i class="fas fa-camera"></i> Skayner
@@ -198,7 +199,9 @@
                         </div>
 
                         <!-- Mahsulotlar grid -->
-                        <div class="products-grid" id="productsGrid"></div>
+                        <div class="products-grid" id="productsGrid">
+                            <!-- JS orqali to'ldiriladi -->
+                        </div>
                     </div>
 
                     <!-- ===== O'NG TOMON: SAVAT ===== -->
@@ -208,6 +211,7 @@
                             <span class="cart-count" id="cartCount">0</span>
                         </div>
 
+                        <!-- Savatdagi mahsulotlar -->
                         <div class="cart-items" id="cartItems">
                             <div class="empty-cart">
                                 <i class="fas fa-shopping-basket"></i>
@@ -215,14 +219,11 @@
                             </div>
                         </div>
 
+                        <!-- Savat jami -->
                         <div class="cart-total">
                             <div class="total-row">
                                 <span>Mahsulotlar:</span>
                                 <span id="totalItems">0</span>
-                            </div>
-                            <div class="total-row">
-                                <span>Skidka:</span>
-                                <span id="totalDiscount">0 so'm</span>
                             </div>
                             <div class="total-row">
                                 <span>Jami summa:</span>
@@ -243,7 +244,7 @@
                             </button>
                         </div>
 
-                        <!-- Checkout -->
+                        <!-- To'lov va chek -->
                         <div class="checkout-actions">
                             <button class="btn-checkout" onclick="processPayment()">
                                 <i class="fas fa-check-circle"></i> To'lov
@@ -261,20 +262,11 @@
 
     <!-- ===== SCRIPTS ===== -->
     <script src="../data/database.js"></script>
-    <script src="../assets/js/utils.js"></script>
-    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/env.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="../assets/js/supabase.js"></script>
+    <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/cashier.js"></script>
     <script src="../assets/js/app.js"></script>
-    <script src="../assets/js/sidebar-toggle.js"></script>`n    <script src="../assets/js/theme.js"></script>`n</body>
-</html><!-- Supabase JS -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="../assets/js/supabase.js"></script>
-<!-- ENV va Supabase -->
-<script src="../assets/js/env.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="../assets/js/supabase.js"></script>
-<!-- Favicon -->
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏷️</text></svg>">
-
-
-
+</body>
+</html>

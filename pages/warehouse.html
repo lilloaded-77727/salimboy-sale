@@ -48,21 +48,22 @@
                     <i class="fas fa-ellipsis-v"></i>
                 </div>
             </div>
-        </aside>`n    <!-- Sidebar overlay -->`n    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+        </aside>
 
         <!-- ===== MAIN CONTENT ===== -->
         <main class="main-content warehouse-main">
             
-            <!-- Header -->
+            <!-- ===== HEADER ===== -->
             <header class="top-header warehouse-header">
                 <div class="header-left">
                     <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
                     <h2><i class="fas fa-boxes"></i> Ombor</h2>
                 </div>
-                <div class="header-right">`n                    <button class="icon-btn" id="themeToggle" onclick="toggleTheme()">`n                        <i class="fas fa-moon"></i>`n                    </button>
+                <div class="header-right">
                     <button class="btn-add" onclick="openAddProductModal()">
                         <i class="fas fa-plus"></i> Mahsulot qo'shish
                     </button>
+                    <button class="icon-btn" id="themeToggle"><i class="fas fa-moon"></i></button>
                     <div class="header-date">
                         <i class="fas fa-calendar-alt"></i>
                         <span id="currentDate"></span>
@@ -70,10 +71,10 @@
                 </div>
             </header>
 
-            <!-- ===== OMBOR CONTENT ===== -->
+            <!-- ===== WAREHOUSE CONTENT ===== -->
             <section class="warehouse-content">
                 
-                <!-- ===== MAHSULOT QO'SHISH MODAL ===== -->
+                <!-- ===== ADD PRODUCT MODAL ===== -->
                 <div class="modal-overlay" id="addProductModal">
                     <div class="modal-content product-modal">
                         <div class="modal-header">
@@ -84,7 +85,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label><i class="fas fa-tag"></i> Mahsulot nomi *</label>
-                                    <input type="text" id="prodName" class="form-control" placeholder="Mahsulot nomi" required />
+                                    <input type="text" id="prodName" class="form-control" placeholder="Mahsulot nomi" />
                                 </div>
                                 <div class="form-group">
                                     <label><i class="fas fa-barcode"></i> Shtrix-kod</label>
@@ -94,15 +95,15 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label><i class="fas fa-money-bill"></i> Kelish narxi *</label>
-                                    <input type="number" id="prodPurchase" class="form-control" placeholder="0" required />
+                                    <input type="number" id="prodPurchase" class="form-control" placeholder="0" />
                                 </div>
                                 <div class="form-group">
                                     <label><i class="fas fa-dollar-sign"></i> Sotish narxi *</label>
-                                    <input type="number" id="prodSale" class="form-control" placeholder="0" required />
+                                    <input type="number" id="prodSale" class="form-control" placeholder="0" />
                                 </div>
                                 <div class="form-group">
                                     <label><i class="fas fa-percent"></i> Foyda (%)</label>
-                                    <input type="text" id="prodProfit" class="form-control" readonly style="background:#f0f0f0;" />
+                                    <input type="text" id="prodProfit" class="form-control" readonly />
                                 </div>
                             </div>
                             <div class="form-row">
@@ -110,14 +111,14 @@
                                     <label><i class="fas fa-cubes"></i> O'lchov birligi *</label>
                                     <select id="prodUnit" class="form-control">
                                         <option value="dona">Dona</option>
-                                        <option value="kg">Kilogramm (kg)</option>
+                                        <option value="kg">Kilogramm</option>
                                         <option value="litr">Litr</option>
                                         <option value="metr">Metr</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label><i class="fas fa-sort-numeric-up"></i> Soni *</label>
-                                    <input type="number" id="prodStock" class="form-control" placeholder="0" required />
+                                    <input type="number" id="prodStock" class="form-control" placeholder="0" />
                                 </div>
                             </div>
                             <div class="form-group" id="weightGroup" style="display:none;">
@@ -136,7 +137,7 @@
                     </div>
                 </div>
 
-                <!-- ===== MAHSULOT TAXRIRLASH MODAL ===== -->
+                <!-- ===== EDIT PRODUCT MODAL ===== -->
                 <div class="modal-overlay" id="editProductModal">
                     <div class="modal-content product-modal">
                         <div class="modal-header">
@@ -147,8 +148,8 @@
                             <input type="hidden" id="editProdId" />
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label><i class="fas fa-tag"></i> Mahsulot nomi *</label>
-                                    <input type="text" id="editProdName" class="form-control" required />
+                                    <label><i class="fas fa-tag"></i> Mahsulot nomi</label>
+                                    <input type="text" id="editProdName" class="form-control" />
                                 </div>
                                 <div class="form-group">
                                     <label><i class="fas fa-barcode"></i> Shtrix-kod</label>
@@ -157,16 +158,16 @@
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label><i class="fas fa-money-bill"></i> Kelish narxi *</label>
-                                    <input type="number" id="editProdPurchase" class="form-control" required />
+                                    <label><i class="fas fa-money-bill"></i> Kelish narxi</label>
+                                    <input type="number" id="editProdPurchase" class="form-control" />
                                 </div>
                                 <div class="form-group">
-                                    <label><i class="fas fa-dollar-sign"></i> Sotish narxi *</label>
-                                    <input type="number" id="editProdSale" class="form-control" required />
+                                    <label><i class="fas fa-dollar-sign"></i> Sotish narxi</label>
+                                    <input type="number" id="editProdSale" class="form-control" />
                                 </div>
                                 <div class="form-group">
                                     <label><i class="fas fa-percent"></i> Foyda (%)</label>
-                                    <input type="text" id="editProdProfit" class="form-control" readonly style="background:#f0f0f0;" />
+                                    <input type="text" id="editProdProfit" class="form-control" readonly />
                                 </div>
                             </div>
                             <div class="form-row">
@@ -174,7 +175,7 @@
                                     <label><i class="fas fa-cubes"></i> O'lchov birligi</label>
                                     <select id="editProdUnit" class="form-control">
                                         <option value="dona">Dona</option>
-                                        <option value="kg">Kilogramm (kg)</option>
+                                        <option value="kg">Kilogramm</option>
                                         <option value="litr">Litr</option>
                                         <option value="metr">Metr</option>
                                     </select>
@@ -188,13 +189,13 @@
                                 <i class="fas fa-save"></i> Yangilash
                             </button>
                             <button class="btn-danger" onclick="deleteProductFromModal()" style="width:100%;margin-top:8px;">
-                                <i class="fas fa-trash"></i> Mahsulotni o'chirish
+                                <i class="fas fa-trash"></i> O'chirish
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- ===== STATISTIKA KARTALARI ===== -->
+                <!-- ===== STATS CARDS ===== -->
                 <div class="stats-grid warehouse-stats">
                     <div class="stat-card stat-purple">
                         <div class="stat-icon"><i class="fas fa-boxes"></i></div>
@@ -224,8 +225,8 @@
                             <p class="stat-number" id="totalSale">0 so'm</p>
                         </div>
                     </div>
-                    <div class="stat-card stat-warning" style="border-top:3px solid #F39C12;">
-                        <div class="stat-icon" style="background:rgba(243,156,18,0.12);color:#F39C12;"><i class="fas fa-chart-line"></i></div>
+                    <div class="stat-card stat-warning">
+                        <div class="stat-icon" style="background:rgba(255,215,0,0.12);color:#FFD700;"><i class="fas fa-chart-line"></i></div>
                         <div class="stat-info">
                             <h3>Jami foyda</h3>
                             <p class="stat-number" id="totalProfit">0 so'm</p>
@@ -233,7 +234,7 @@
                     </div>
                 </div>
 
-                <!-- ===== QIDIRUV ===== -->
+                <!-- ===== SEARCH ===== -->
                 <div class="warehouse-search">
                     <div class="search-box">
                         <i class="fas fa-search"></i>
@@ -250,7 +251,7 @@
                     </div>
                 </div>
 
-                <!-- ===== MAHSULOTLAR JADVALI ===== -->
+                <!-- ===== PRODUCTS TABLE ===== -->
                 <div class="table-card">
                     <div class="table-header">
                         <h3><i class="fas fa-list"></i> Mahsulotlar ro'yxati</h3>
@@ -263,7 +264,7 @@
                                     <th>#</th>
                                     <th>Rasm</th>
                                     <th>Nomi</th>
-                                    <th>Shtrix-kod</th>
+                                    <th>Shtrix</th>
                                     <th>Kelish</th>
                                     <th>Sotish</th>
                                     <th>Foyda</th>
@@ -285,20 +286,11 @@
 
     <!-- ===== SCRIPTS ===== -->
     <script src="../data/database.js"></script>
-    <script src="../assets/js/utils.js"></script>
-    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/env.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="../assets/js/supabase.js"></script>
+    <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/warehouse.js"></script>
     <script src="../assets/js/app.js"></script>
-    <script src="../assets/js/sidebar-toggle.js"></script>`n    <script src="../assets/js/theme.js"></script>`n</body>
-</html><!-- Supabase JS -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="../assets/js/supabase.js"></script>
-<!-- ENV va Supabase -->
-<script src="../assets/js/env.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="../assets/js/supabase.js"></script>
-<!-- Favicon -->
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏷️</text></svg>">
-
-
-
+</body>
+</html>

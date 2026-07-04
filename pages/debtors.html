@@ -48,18 +48,22 @@
                     <i class="fas fa-ellipsis-v"></i>
                 </div>
             </div>
-        </aside>`n    <!-- Sidebar overlay -->`n    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+        </aside>
 
         <!-- ===== MAIN CONTENT ===== -->
         <main class="main-content debtors-main">
             
-            <!-- Header -->
+            <!-- ===== HEADER ===== -->
             <header class="top-header debtors-header">
                 <div class="header-left">
                     <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
-                    <h2><i class="fas fa-hand-holding-usd"></i> Nasiya (Qarzdorlar)</h2>
+                    <h2><i class="fas fa-hand-holding-usd"></i> Nasiya</h2>
                 </div>
-                <div class="header-right">`n                    <button class="icon-btn" id="themeToggle" onclick="toggleTheme()">`n                        <i class="fas fa-moon"></i>`n                    </button>
+                <div class="header-right">
+                    <button class="btn-export" onclick="exportDebtors()">
+                        <i class="fas fa-file-export"></i> Eksport
+                    </button>
+                    <button class="icon-btn" id="themeToggle"><i class="fas fa-moon"></i></button>
                     <div class="header-date">
                         <i class="fas fa-calendar-alt"></i>
                         <span id="currentDate"></span>
@@ -67,10 +71,38 @@
                 </div>
             </header>
 
-            <!-- ===== NASIYA CONTENT ===== -->
+            <!-- ===== DEBTORS CONTENT ===== -->
             <section class="debtors-content">
                 
-                <!-- ===== STATISTIKA KARTALARI ===== -->
+                <!-- ===== PAYMENT MODAL ===== -->
+                <div class="modal-overlay" id="paymentModal">
+                    <div class="modal-content payment-modal">
+                        <div class="modal-header">
+                            <h3><i class="fas fa-money-bill-wave"></i> Qarz to'lash</h3>
+                            <button class="modal-close" onclick="closePaymentModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" id="payDebtorId" />
+                            <div class="form-group">
+                                <label><i class="fas fa-user"></i> Qarzdor</label>
+                                <input type="text" id="payDebtorName" class="form-control" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-money-bill"></i> Qolgan qarz</label>
+                                <input type="text" id="payRemaining" class="form-control" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-money-bill-wave"></i> To'lov summasi</label>
+                                <input type="number" id="payAmount" class="form-control" placeholder="0" />
+                            </div>
+                            <button class="btn-primary" onclick="processPayment()" style="width:100%;">
+                                <i class="fas fa-check"></i> To'lovni amalga oshirish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== STATS ===== -->
                 <div class="stats-grid debtors-stats">
                     <div class="stat-card stat-red">
                         <div class="stat-icon"><i class="fas fa-hand-holding-usd"></i></div>
@@ -102,7 +134,7 @@
                     </div>
                 </div>
 
-                <!-- ===== QIDIRUV ===== -->
+                <!-- ===== SEARCH ===== -->
                 <div class="debtors-search">
                     <div class="search-box">
                         <i class="fas fa-search"></i>
@@ -115,12 +147,9 @@
                             <option value="paid">To'langan</option>
                         </select>
                     </div>
-                    <button class="btn-export" onclick="exportDebtors()">
-                        <i class="fas fa-file-export"></i> Eksport
-                    </button>
                 </div>
 
-                <!-- ===== QARZDORLAR JADVALI ===== -->
+                <!-- ===== DEBTORS TABLE ===== -->
                 <div class="table-card">
                     <div class="table-header">
                         <h3><i class="fas fa-list"></i> Qarzdorlar ro'yxati</h3>
@@ -134,13 +163,15 @@
                                     <th>Ismi</th>
                                     <th>Telefon</th>
                                     <th>Manzil</th>
-                                    <th>Qarz summasi</th>
+                                    <th>Qarz</th>
                                     <th>Sana</th>
                                     <th>Holat</th>
                                     <th>Amallar</th>
                                 </tr>
                             </thead>
-                            <tbody id="debtorsTableBody"></tbody>
+                            <tbody id="debtorsTableBody">
+                                <!-- JS orqali to'ldiriladi -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -149,51 +180,13 @@
         </main>
     </div>
 
-    <!-- ===== TO'LOV QILISH MODAL ===== -->
-    <div class="modal-overlay" id="paymentModal">
-        <div class="modal-content payment-modal">
-            <div class="modal-header">
-                <h3><i class="fas fa-money-bill-wave"></i> Qarz to'lash</h3>
-                <button class="modal-close" onclick="closePaymentModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="payDebtorId" />
-                <div class="form-group">
-                    <label><i class="fas fa-user"></i> Qarzdor</label>
-                    <input type="text" id="payDebtorName" class="form-control" readonly />
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-money-bill"></i> Qolgan qarz</label>
-                    <input type="text" id="payRemaining" class="form-control" readonly />
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-money-bill-wave"></i> To'lov summasi *</label>
-                    <input type="number" id="payAmount" class="form-control" placeholder="0" required />
-                </div>
-                <button class="btn-primary" onclick="processPayment()" style="width:100%;">
-                    <i class="fas fa-check"></i> To'lovni amalga oshirish
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- ===== SCRIPTS ===== -->
     <script src="../data/database.js"></script>
-    <script src="../assets/js/utils.js"></script>
-    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/env.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="../assets/js/supabase.js"></script>
+    <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/debtors.js"></script>
     <script src="../assets/js/app.js"></script>
-    <script src="../assets/js/sidebar-toggle.js"></script>`n    <script src="../assets/js/theme.js"></script>`n</body>
-</html><!-- Supabase JS -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="../assets/js/supabase.js"></script>
-<!-- ENV va Supabase -->
-<script src="../assets/js/env.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="../assets/js/supabase.js"></script>
-
-<!-- Favicon -->
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏷️</text></svg>">
-
-
-
+</body>
+</html>
