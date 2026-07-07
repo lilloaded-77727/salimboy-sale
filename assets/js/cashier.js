@@ -8,6 +8,14 @@ var currentWeightProduct = null;
 var discountPercent = 0;
 var discountAmount = 0;
 
+// Kunlik statistika
+var dailyStats = {
+    cash: 0,
+    terminal: 0,
+    debt: 0,
+    total: 0
+};
+
 // ===== DOM READY =====
 document.addEventListener('DOMContentLoaded', function() {
     try {
@@ -27,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loadCashiers();
         renderProducts();
         checkShiftStatus();
+        loadDailyStats();
         
         // Sidebar toggle
         var menuToggle = document.getElementById('menuToggle');
@@ -43,6 +52,18 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Cashier.js yuklashda xatolik:', e);
     }
 });
+
+// ===== KUNLIK STATISTIKANI YUKLASH =====
+function loadDailyStats() {
+    try {
+        if (typeof DB !== 'undefined' && DB && DB.statistics && DB.statistics.daily) {
+            dailyStats = DB.statistics.daily;
+            console.log('📊 Kunlik statistika yuklandi:', dailyStats);
+        }
+    } catch(e) {
+        console.log('Statistika yuklanmadi:', e);
+    }
+}
 
 // ===== KASSIRLARNI YUKLASH =====
 function loadCashiers() {
@@ -482,13 +503,19 @@ function closeDebtorModal() {
     if (modal) modal.classList.remove('active');
 }
 
-// ===== SAVDONI YAKUNLASH =====
+// ===== SAVDONI YAKUNLASH (CHEK MA'LUMOTLARI BILAN) =====
 function completeSale(total, debtorData) {
     console.log('🔧 completeSale() ishga tushdi');
     console.log('💰 Total:', total);
     console.log('💳 Payment type:', selectedPayment);
     
     try {
+        // Smena ochiqligini tekshirish
+        if (!shiftOpen || !currentShift) {
+            showNotification('⚠️ Smena ochilmagan!', 'warning');
+            return;
+        }
+        
         // 1. Savdo ma'lumotlarini tayyorlash
         var saleData = {
             cashier: currentShift ? currentShift.cashier : 'Noma\'lum',
@@ -513,8 +540,6 @@ function completeSale(total, debtorData) {
                 unit: item.unit || 'dona'
             });
         }
-        
-        console.log('📦 Savdo ma\'lumotlari:', saleData);
         
         // 3. DB ga qo'shish
         if (typeof DB === 'undefined' || !DB) {
@@ -549,7 +574,7 @@ function completeSale(total, debtorData) {
             };
         }
         
-        DB.statistics.daily.total += saleData.total;
+        // Kunlik statistika
         if (saleData.paymentType === 'cash') {
             DB.statistics.daily.cash += saleData.total;
         } else if (saleData.paymentType === 'terminal') {
@@ -557,10 +582,17 @@ function completeSale(total, debtorData) {
         } else if (saleData.paymentType === 'debt') {
             DB.statistics.daily.debt += saleData.total;
         }
+        DB.statistics.daily.total += saleData.total;
         
-        DB.statistics.monthly.total += saleData.total;
-        DB.statistics.yearly.total += saleData.total;
-        console.log('📊 Statistika yangilandi');
+        // dailyStats ni yangilash
+        if (saleData.paymentType === 'cash') {
+            dailyStats.cash += saleData.total;
+        } else if (saleData.paymentType === 'terminal') {
+            dailyStats.terminal += saleData.total;
+        } else if (saleData.paymentType === 'debt') {
+            dailyStats.debt += saleData.total;
+        }
+        dailyStats.total += saleData.total;
         
         // 3.3. Mahsulot zaxirasini kamaytirish
         for (var i = 0; i < saleData.items.length; i++) {
@@ -589,7 +621,7 @@ function completeSale(total, debtorData) {
             console.log('👤 Qarzdor qo\'shildi:', saleData.debtor.name);
         }
         
-        // 3.5. Smena statistikasini yangilash
+        // 3.5. Smena statistikasi
         if (currentShift) {
             currentShift.totalSales += total;
             if (DB.shifts) {
@@ -603,8 +635,11 @@ function completeSale(total, debtorData) {
         }
         
         // 4. Ma'lumotlarni saqlash
-        saveDB();
+        if (typeof saveDB === 'function') {
+            saveDB();
+        }
         console.log('💾 Ma\'lumotlar saqlandi!');
+        console.log('📊 Kunlik statistika:', dailyStats);
         
         // 5. Savatni tozalash
         cart = [];
@@ -613,12 +648,19 @@ function completeSale(total, debtorData) {
         updateCart();
         renderProducts();
         
-        // 6. Natijani ko'rsatish
+        // 6. Dashboard statistikasini yangilash
+        if (typeof updateStats === 'function') {
+            setTimeout(function() {
+                updateStats();
+            }, 50);
+        }
+        
+        // 7. Natijani ko'rsatish
         var paymentText = selectedPayment === 'cash' ? 'Naxt' : 
                           selectedPayment === 'terminal' ? 'Terminal' : 'Nasiya';
         showNotification('✅ Sotuv amalga oshirildi! (' + paymentText + ') ' + formatPrice(total), 'success');
         
-        // 7. Chekni chiqarish
+        // 8. Chekni chiqarish
         printReceipt(saleData);
         
     } catch(e) {
@@ -627,42 +669,148 @@ function completeSale(total, debtorData) {
     }
 }
 
-// ===== CHEK =====
+// ===== CHEK CHIQARISH (TUZATILGAN - QISQA) =====
 function printReceipt(saleData) {
     try {
+        // Agar saleData bo'lmasa, oxirgi savdoni olish
+        if (!saleData) {
+            if (typeof DB !== 'undefined' && DB && DB.sales && DB.sales.length > 0) {
+                saleData = DB.sales[DB.sales.length - 1];
+            } else {
+                showNotification('⚠️ Chek uchun ma\'lumot yo\'q!', 'warning');
+                return;
+            }
+        }
+
         var settings = (typeof DB !== 'undefined' && DB && DB.settings) ? DB.settings : {};
         var now = new Date();
-        var receiptHTML = '<div style="font-family:monospace;width:300px;padding:16px;background:white;color:black;">';
-        receiptHTML += '<div style="text-align:center;border-bottom:1px dashed #ccc;padding-bottom:8px;">';
-        receiptHTML += '<h2 style="margin:0;">' + (settings.shopName || 'Salimboy Sale') + '</h2>';
-        receiptHTML += '<p style="margin:2px 0;font-size:12px;color:#666;">' + now.toLocaleDateString('uz-UZ') + ' ' + now.toLocaleTimeString('uz-UZ') + '</p>';
+        var dateStr = now.toLocaleDateString('uz-UZ');
+        var timeStr = now.toLocaleTimeString('uz-UZ');
+
+        // ===== CHEK HTML (QISQA VA ZAMONAVIY) =====
+        var receiptHTML = '';
+        receiptHTML += '<div style="font-family: \'Courier New\', monospace; width: 280px; padding: 12px 14px; margin: 0 auto; background: white; color: #1a1a2e; font-size: 12px; line-height: 1.5;">';
+        
+        // ===== 1. DO'KON NOMI =====
+        receiptHTML += '<div style="text-align: center; border-bottom: 1px dashed #ccc; padding-bottom: 6px; margin-bottom: 6px;">';
+        receiptHTML += '<h2 style="margin: 0; font-size: 16px; font-weight: 800; color: #6C63FF;">' + (settings.shopName || 'Salimboy Sale') + '</h2>';
+        receiptHTML += '<p style="margin: 2px 0; font-size: 11px; color: #666;">' + (settings.shopOwner || '') + '</p>';
+        receiptHTML += '<p style="margin: 2px 0; font-size: 10px; color: #999;">' + dateStr + ' ' + timeStr + '</p>';
         receiptHTML += '</div>';
-        receiptHTML += '<div style="margin:8px 0;">';
+        
+        // ===== 2. MAHSULOTLAR =====
+        receiptHTML += '<div style="margin: 4px 0;">';
+        receiptHTML += '<table style="width: 100%; font-size: 11px; border-collapse: collapse;">';
+        receiptHTML += '<thead><tr style="border-bottom: 1px solid #ddd;">';
+        receiptHTML += '<th style="text-align: left; padding: 2px 0;">Mahsulot</th>';
+        receiptHTML += '<th style="text-align: center; padding: 2px 0;">Soni</th>';
+        receiptHTML += '<th style="text-align: right; padding: 2px 0;">Narx</th>';
+        receiptHTML += '</tr></thead><tbody>';
+
         for (var i = 0; i < saleData.items.length; i++) {
             var item = saleData.items[i];
             var total = item.price * item.quantity;
-            receiptHTML += '<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:12px;">';
-            receiptHTML += '<span>' + item.name + ' x' + item.quantity + '</span>';
-            receiptHTML += '<span>' + formatPrice(total) + '</span>';
+            var qtyDisplay = item.unit === 'kg' ? item.quantity.toFixed(3) : item.quantity;
+            var unitText = item.unit === 'kg' ? 'kg' : 'x';
+            
+            // Mahsulot nomi qisqartirilgan
+            var nameShort = item.name.length > 20 ? item.name.substring(0, 18) + '..' : item.name;
+            
+            receiptHTML += '<tr>';
+            receiptHTML += '<td style="padding: 1px 0;">' + nameShort + '</td>';
+            receiptHTML += '<td style="padding: 1px 0; text-align: center;">' + qtyDisplay + unitText + '</td>';
+            receiptHTML += '<td style="padding: 1px 0; text-align: right;">' + formatPriceShort(total) + '</td>';
+            receiptHTML += '</tr>';
+        }
+
+        receiptHTML += '</tbody></table></div>';
+        
+        // ===== 3. JAMI =====
+        receiptHTML += '<div style="border-top: 1px dashed #ccc; padding-top: 6px; margin-top: 4px;">';
+        
+        // Skidka
+        if (saleData.discount > 0) {
+            receiptHTML += '<div style="display: flex; justify-content: space-between; font-size: 11px; color: #888;">';
+            receiptHTML += '<span>Skidka (' + (saleData.discountPercent || 0) + '%)</span>';
+            receiptHTML += '<span>- ' + formatPriceShort(saleData.discount) + '</span>';
             receiptHTML += '</div>';
         }
-        receiptHTML += '</div>';
-        receiptHTML += '<div style="border-top:1px dashed #ccc;padding-top:8px;display:flex;justify-content:space-between;font-weight:bold;font-size:16px;">';
-        receiptHTML += '<span>JAMI</span>';
-        receiptHTML += '<span>' + formatPrice(saleData.total) + '</span>';
-        receiptHTML += '</div>';
-        receiptHTML += '<div style="text-align:center;border-top:1px dashed #ccc;padding-top:8px;margin-top:8px;font-size:11px;color:#888;">';
-        receiptHTML += '<p>' + (settings.receiptFooter || 'Salimboy Sale dasturi') + '</p>';
-        receiptHTML += '</div></div>';
         
-        var printWindow = window.open('', '_blank', 'width=400,height=500');
+        // Jami
+        receiptHTML += '<div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; padding: 4px 0;">';
+        receiptHTML += '<span>JAMI</span>';
+        receiptHTML += '<span style="color: #6C63FF;">' + formatPriceShort(saleData.total) + '</span>';
+        receiptHTML += '</div>';
+        
+        // To'lov turi
+        var paymentText = saleData.paymentType === 'cash' ? 'Naxt' : 
+                          saleData.paymentType === 'terminal' ? 'Terminal' : 'Nasiya';
+        receiptHTML += '<div style="display: flex; justify-content: space-between; font-size: 10px; color: #888; padding: 2px 0;">';
+        receiptHTML += '<span>To\'lov turi</span>';
+        receiptHTML += '<span>' + paymentText + '</span>';
+        receiptHTML += '</div>';
+        
+        // Nasiya bo'lsa qarzdor
+        if (saleData.paymentType === 'debt' && saleData.debtor) {
+            receiptHTML += '<div style="display: flex; justify-content: space-between; font-size: 10px; color: #888; padding: 2px 0;">';
+            receiptHTML += '<span>Qarzdor</span>';
+            receiptHTML += '<span>' + saleData.debtor.name + '</span>';
+            receiptHTML += '</div>';
+        }
+        
+        receiptHTML += '</div>';
+        
+        // ===== 4. PASTKI QISM =====
+        receiptHTML += '<div style="text-align: center; border-top: 1px dashed #ccc; padding-top: 6px; margin-top: 6px; font-size: 10px; color: #999;">';
+        receiptHTML += '<p style="margin: 2px 0;">' + (settings.receiptFooter || 'Salimboy Sale dasturi') + '</p>';
+        receiptHTML += '<p style="margin: 2px 0; font-size: 9px;">#' + (saleData.id || '') + '</p>';
+        
+        // QR kod o'rniga chiziqcha
+        receiptHTML += '<div style="display: flex; justify-content: center; gap: 4px; margin: 4px 0;">';
+        for (var j = 0; j < 20; j++) {
+            receiptHTML += '<span style="display: inline-block; width: 4px; height: 4px; background: #ccc;"></span>';
+        }
+        receiptHTML += '</div>';
+        
+        receiptHTML += '<p style="margin: 2px 0; font-size: 9px; color: #ccc;">www.salimboy.uz</p>';
+        receiptHTML += '</div>';
+        
+        receiptHTML += '</div>';
+
+        // ===== CHEKNI CHOP ETISH =====
+        var printWindow = window.open('', '_blank', 'width=320,height=500,scrollbars=yes');
         if (printWindow) {
-            printWindow.document.write('<html><head><title>Chek</title></head><body>' + receiptHTML + '<script>window.print();<\/script></body></html>');
+            printWindow.document.write('<html><head>');
+            printWindow.document.write('<title>Chek - ' + (settings.shopName || 'Salimboy Sale') + '</title>');
+            printWindow.document.write('<style>');
+            printWindow.document.write('body { margin: 0; padding: 20px; background: #f5f5f5; display: flex; justify-content: center; }');
+            printWindow.document.write('* { box-sizing: border-box; }');
+            printWindow.document.write('@media print { body { background: white; padding: 0; } }');
+            printWindow.document.write('</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(receiptHTML);
+            printWindow.document.write('<script>');
+            printWindow.document.write('window.onload = function() {');
+            printWindow.document.write('  setTimeout(function() {');
+            printWindow.document.write('    window.print();');
+            printWindow.document.write('  }, 300);');
+            printWindow.document.write('};');
+            printWindow.document.write('<\/script>');
+            printWindow.document.write('</body></html>');
             printWindow.document.close();
+        } else {
+            showNotification('⚠️ Chek oynasi ochilmadi! Pop-up bloklangan bo\'lishi mumkin.', 'warning');
         }
     } catch(e) {
         console.log('Chek chiqarishda xatolik:', e);
+        showNotification('⚠️ Chek chiqarishda xatolik: ' + e.message, 'error');
     }
+}
+
+// ===== QISQA PUL FORMATI =====
+function formatPriceShort(amount) {
+    if (!amount) return '0';
+    return amount.toLocaleString('uz-UZ');
 }
 
 // ===== SMENA =====

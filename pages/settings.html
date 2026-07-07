@@ -117,20 +117,70 @@
                     <div class="settings-panel" id="panel-receipt">
                         <div class="settings-card">
                             <h3><i class="fas fa-receipt"></i> Chek dizayni</h3>
+                            
                             <div class="form-group">
                                 <label><i class="fas fa-align-left"></i> Chek sarlavhasi</label>
                                 <input type="text" id="receiptHeader" class="form-control" placeholder="Chek sarlavhasi" value="Salimboy Sale" />
                             </div>
+                            
                             <div class="form-group">
                                 <label><i class="fas fa-align-center"></i> Chek pastki matni</label>
-                                <textarea id="receiptFooter" class="form-control" rows="3" placeholder="Chek pastki matni">Salimboy Sale dasturi tomonidan ishlab chiqarilgan</textarea>
+                                <textarea id="receiptFooter" class="form-control" rows="2" placeholder="Chek pastki matni">Salimboy Sale dasturi tomonidan ishlab chiqarilgan</textarea>
                             </div>
-                            <button class="btn-primary" onclick="saveReceiptSettings()">
-                                <i class="fas fa-save"></i> Saqlash
-                            </button>
-                            <button class="btn-outline" onclick="previewReceipt()" style="margin-top:8px;">
-                                <i class="fas fa-eye"></i> Ko'rish
-                            </button>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label><i class="fas fa-font"></i> Shrift</label>
+                                    <select id="receiptFont" class="form-control">
+                                        <option value="monospace">Monospace</option>
+                                        <option value="sans-serif" selected>Sans-serif</option>
+                                        <option value="serif">Serif</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-print"></i> O'lcham</label>
+                                    <select id="receiptSize" class="form-control">
+                                        <option value="small">Kichik (58mm)</option>
+                                        <option value="medium" selected>O'rta (80mm)</option>
+                                        <option value="large">Katta (100mm)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-palette"></i> Rang</label>
+                                <div class="color-options">
+                                    <input type="color" id="receiptColor" value="#6C63FF" />
+                                    <label for="receiptColor">Asosiy rang</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-toggle-on"></i> Qo'shimcha</label>
+                                <div class="toggle-group">
+                                    <label class="toggle-item">
+                                        <input type="checkbox" id="receiptShowLogo" checked />
+                                        <span>Logotip ko'rsatish</span>
+                                    </label>
+                                    <label class="toggle-item">
+                                        <input type="checkbox" id="receiptShowBarcode" checked />
+                                        <span>Shtrix kod ko'rsatish</span>
+                                    </label>
+                                    <label class="toggle-item">
+                                        <input type="checkbox" id="receiptShowQr" />
+                                        <span>QR kod ko'rsatish</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button class="btn-primary" onclick="saveReceiptSettings()">
+                                    <i class="fas fa-save"></i> Saqlash
+                                </button>
+                                <button class="btn-outline" onclick="previewReceipt()">
+                                    <i class="fas fa-eye"></i> Chekni ko'rish
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -182,5 +232,630 @@
     <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/settings.js"></script>
     <script src="../assets/js/app.js"></script>
+    
+    <!-- ===== SETTINGS CUSTOM JS ===== -->
+    <script>
+    // ===== TAB SWITCH =====
+    function switchTab(tab) {
+        // Tabs
+        var tabs = document.querySelectorAll('.tab-btn');
+        for (var i = 0; i < tabs.length; i++) {
+            tabs[i].classList.remove('active');
+            if (tabs[i].dataset.tab === tab) {
+                tabs[i].classList.add('active');
+            }
+        }
+        
+        // Panels
+        var panels = document.querySelectorAll('.settings-panel');
+        for (var i = 0; i < panels.length; i++) {
+            panels[i].classList.remove('active');
+            if (panels[i].id === 'panel-' + tab) {
+                panels[i].classList.add('active');
+            }
+        }
+    }
+
+    // ===== SAVE GENERAL SETTINGS =====
+    function saveGeneralSettings() {
+        try {
+            var settings = {
+                shopName: document.getElementById('shopName').value,
+                shopOwner: document.getElementById('shopOwner').value,
+                shopPhone: document.getElementById('shopPhone').value,
+                shopAddress: document.getElementById('shopAddress').value
+            };
+            
+            if (typeof DB !== 'undefined' && DB) {
+                DB.settings = DB.settings || {};
+                DB.settings.shopName = settings.shopName;
+                DB.settings.shopOwner = settings.shopOwner;
+                DB.settings.shopPhone = settings.shopPhone;
+                DB.settings.shopAddress = settings.shopAddress;
+                
+                if (typeof saveDB === 'function') {
+                    saveDB();
+                }
+                
+                showNotification('✅ Sozlamalar saqlandi!', 'success');
+            } else {
+                showNotification('⚠️ Ma\'lumotlar bazasi topilmadi!', 'error');
+            }
+        } catch(e) {
+            console.log('Xatolik:', e);
+            showNotification('⚠️ Xatolik yuz berdi!', 'error');
+        }
+    }
+
+    // ===== SAVE RECEIPT SETTINGS =====
+    function saveReceiptSettings() {
+        try {
+            var settings = {
+                receiptHeader: document.getElementById('receiptHeader').value,
+                receiptFooter: document.getElementById('receiptFooter').value,
+                receiptFont: document.getElementById('receiptFont').value,
+                receiptSize: document.getElementById('receiptSize').value,
+                receiptColor: document.getElementById('receiptColor').value,
+                receiptShowLogo: document.getElementById('receiptShowLogo').checked,
+                receiptShowBarcode: document.getElementById('receiptShowBarcode').checked,
+                receiptShowQr: document.getElementById('receiptShowQr').checked
+            };
+            
+            if (typeof DB !== 'undefined' && DB) {
+                DB.settings = DB.settings || {};
+                DB.settings.receiptHeader = settings.receiptHeader;
+                DB.settings.receiptFooter = settings.receiptFooter;
+                DB.settings.receiptFont = settings.receiptFont;
+                DB.settings.receiptSize = settings.receiptSize;
+                DB.settings.receiptColor = settings.receiptColor;
+                DB.settings.receiptShowLogo = settings.receiptShowLogo;
+                DB.settings.receiptShowBarcode = settings.receiptShowBarcode;
+                DB.settings.receiptShowQr = settings.receiptShowQr;
+                
+                if (typeof saveDB === 'function') {
+                    saveDB();
+                }
+                
+                showNotification('✅ Chek sozlamalari saqlandi!', 'success');
+            } else {
+                showNotification('⚠️ Ma\'lumotlar bazasi topilmadi!', 'error');
+            }
+        } catch(e) {
+            console.log('Xatolik:', e);
+            showNotification('⚠️ Xatolik yuz berdi!', 'error');
+        }
+    }
+
+    // ===== PREVIEW RECEIPT =====
+    function previewReceipt() {
+        try {
+            var settings = (typeof DB !== 'undefined' && DB && DB.settings) ? DB.settings : {};
+            
+            var header = document.getElementById('receiptHeader').value || settings.receiptHeader || 'Salimboy Sale';
+            var footer = document.getElementById('receiptFooter').value || settings.receiptFooter || 'Salimboy Sale dasturi';
+            var font = document.getElementById('receiptFont').value || settings.receiptFont || 'monospace';
+            var size = document.getElementById('receiptSize').value || settings.receiptSize || 'medium';
+            var color = document.getElementById('receiptColor').value || settings.receiptColor || '#6C63FF';
+            var showLogo = document.getElementById('receiptShowLogo').checked;
+            var showBarcode = document.getElementById('receiptShowBarcode').checked;
+            var showQr = document.getElementById('receiptShowQr').checked;
+            
+            var width = size === 'small' ? '240px' : size === 'medium' ? '320px' : '400px';
+            var fontSize = size === 'small' ? '10px' : size === 'medium' ? '12px' : '14px';
+            
+            var now = new Date();
+            var dateStr = now.toLocaleDateString('uz-UZ');
+            var timeStr = now.toLocaleTimeString('uz-UZ');
+            
+            var html = '<div style="font-family:' + font + ';width:' + width + ';padding:12px 14px;margin:0 auto;background:white;color:#1a1a2e;font-size:' + fontSize + ';line-height:1.5;">';
+            
+            // Header
+            html += '<div style="text-align:center;border-bottom:1px dashed #ccc;padding-bottom:8px;margin-bottom:8px;">';
+            if (showLogo) {
+                html += '<div style="font-size:24px;margin-bottom:4px;">🏪</div>';
+            }
+            html += '<h2 style="margin:0;font-size:16px;font-weight:800;color:' + color + ';">' + header + '</h2>';
+            html += '<p style="margin:2px 0;font-size:11px;color:#666;">' + dateStr + ' ' + timeStr + '</p>';
+            html += '</div>';
+            
+            // Items
+            html += '<div style="margin:8px 0;">';
+            html += '<table style="width:100%;font-size:11px;border-collapse:collapse;">';
+            html += '<thead><tr style="border-bottom:1px solid #ddd;">';
+            html += '<th style="text-align:left;padding:4px 0;">Mahsulot</th>';
+            html += '<th style="text-align:center;padding:4px 0;">Soni</th>';
+            html += '<th style="text-align:right;padding:4px 0;">Narx</th>';
+            html += '</tr></thead><tbody>';
+            
+            // Sample items
+            var sampleItems = [
+                { name: 'Non', qty: 2, price: 5000 },
+                { name: 'Sut', qty: 1, price: 12000 },
+                { name: 'Un', qty: 3, price: 8000 }
+            ];
+            
+            for (var i = 0; i < sampleItems.length; i++) {
+                var item = sampleItems[i];
+                html += '<tr>';
+                html += '<td style="padding:3px 0;">' + item.name + '</td>';
+                html += '<td style="padding:3px 0;text-align:center;">' + item.qty + 'x</td>';
+                html += '<td style="padding:3px 0;text-align:right;">' + (item.price * item.qty).toLocaleString() + '</td>';
+                html += '</tr>';
+            }
+            
+            html += '</tbody></table></div>';
+            
+            // Total
+            html += '<div style="border-top:1px dashed #ccc;padding-top:8px;margin-top:4px;">';
+            html += '<div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;padding:4px 0;">';
+            html += '<span>JAMI</span>';
+            html += '<span style="color:' + color + ';">43,000</span>';
+            html += '</div>';
+            
+            html += '<div style="display:flex;justify-content:space-between;font-size:10px;color:#888;padding:2px 0;">';
+            html += '<span>To\'lov turi</span>';
+            html += '<span>Naxt</span>';
+            html += '</div>';
+            html += '</div>';
+            
+            // Footer
+            html += '<div style="text-align:center;border-top:1px dashed #ccc;padding-top:8px;margin-top:8px;font-size:10px;color:#999;">';
+            html += '<p style="margin:2px 0;">' + footer + '</p>';
+            
+            if (showBarcode) {
+                html += '<div style="display:flex;justify-content:center;gap:3px;margin:6px 0;">';
+                for (var j = 0; j < 20; j++) {
+                    var height = 8 + Math.random() * 16;
+                    html += '<span style="display:inline-block;width:2px;height:' + height + 'px;background:#333;"></span>';
+                }
+                html += '</div>';
+            }
+            
+            if (showQr) {
+                html += '<div style="display:flex;justify-content:center;margin:4px 0;">';
+                html += '<div style="display:grid;grid-template-columns:repeat(10,6px);gap:1px;">';
+                for (var k = 0; k < 100; k++) {
+                    var bg = Math.random() > 0.5 ? '#333' : 'white';
+                    html += '<span style="display:block;width:6px;height:6px;background:' + bg + ';"></span>';
+                }
+                html += '</div></div>';
+            }
+            
+            html += '<p style="margin:2px 0;font-size:9px;color:#ccc;">www.salimboy.uz</p>';
+            html += '</div>';
+            
+            html += '</div>';
+            
+            document.getElementById('receiptPreviewContent').innerHTML = html;
+            document.getElementById('receiptPreviewModal').classList.add('active');
+            
+        } catch(e) {
+            console.log('Xatolik:', e);
+            showNotification('⚠️ Xatolik yuz berdi!', 'error');
+        }
+    }
+
+    // ===== CLOSE RECEIPT PREVIEW =====
+    function closeReceiptPreview() {
+        document.getElementById('receiptPreviewModal').classList.remove('active');
+    }
+
+    // ===== BACKUP FUNCTIONS =====
+    function createBackup() {
+        try {
+            if (typeof DB !== 'undefined' && DB) {
+                var data = JSON.stringify(DB);
+                var blob = new Blob([data], { type: 'application/json' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'salimboy_backup_' + new Date().toISOString().slice(0,10) + '.json';
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                document.getElementById('lastBackup').textContent = new Date().toLocaleString('uz-UZ');
+                showNotification('✅ Zaxira yaratildi!', 'success');
+            } else {
+                showNotification('⚠️ Ma\'lumotlar bazasi topilmadi!', 'error');
+            }
+        } catch(e) {
+            console.log('Xatolik:', e);
+            showNotification('⚠️ Xatolik yuz berdi!', 'error');
+        }
+    }
+
+    function restoreBackup() {
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = function(e) {
+            var file = e.target.files[0];
+            if (!file) return;
+            
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                try {
+                    var data = JSON.parse(ev.target.result);
+                    if (typeof DB !== 'undefined') {
+                        for (var key in data) {
+                            if (data.hasOwnProperty(key)) {
+                                DB[key] = data[key];
+                            }
+                        }
+                        if (typeof saveDB === 'function') {
+                            saveDB();
+                        }
+                        showNotification('✅ Zaxira tiklandi!', 'success');
+                        location.reload();
+                    }
+                } catch(err) {
+                    console.log('Xatolik:', err);
+                    showNotification('⚠️ Noto\'g\'ri fayl formati!', 'error');
+                }
+            };
+            reader.readAsText(file);
+        };
+        input.click();
+    }
+
+    function clearAllData() {
+        if (confirm('Barcha ma\'lumotlar o\'chiriladi. Ishonchingiz komilmi?')) {
+            if (confirm('Bu amalni qaytarib bo\'lmaydi! Davom etasizmi?')) {
+                try {
+                    if (typeof DB !== 'undefined') {
+                        for (var key in DB) {
+                            if (DB.hasOwnProperty(key)) {
+                                delete DB[key];
+                            }
+                        }
+                        if (typeof saveDB === 'function') {
+                            saveDB();
+                        }
+                        showNotification('✅ Barcha ma\'lumotlar tozalandi!', 'success');
+                        location.reload();
+                    }
+                } catch(e) {
+                    console.log('Xatolik:', e);
+                    showNotification('⚠️ Xatolik yuz berdi!', 'error');
+                }
+            }
+        }
+    }
+
+    // ===== LOAD SETTINGS =====
+    function loadSettings() {
+        try {
+            if (typeof DB !== 'undefined' && DB && DB.settings) {
+                var s = DB.settings;
+                
+                if (document.getElementById('shopName')) {
+                    document.getElementById('shopName').value = s.shopName || '';
+                }
+                if (document.getElementById('shopOwner')) {
+                    document.getElementById('shopOwner').value = s.shopOwner || '';
+                }
+                if (document.getElementById('shopPhone')) {
+                    document.getElementById('shopPhone').value = s.shopPhone || '';
+                }
+                if (document.getElementById('shopAddress')) {
+                    document.getElementById('shopAddress').value = s.shopAddress || '';
+                }
+                
+                if (document.getElementById('receiptHeader')) {
+                    document.getElementById('receiptHeader').value = s.receiptHeader || 'Salimboy Sale';
+                }
+                if (document.getElementById('receiptFooter')) {
+                    document.getElementById('receiptFooter').value = s.receiptFooter || 'Salimboy Sale dasturi';
+                }
+                if (document.getElementById('receiptFont')) {
+                    document.getElementById('receiptFont').value = s.receiptFont || 'monospace';
+                }
+                if (document.getElementById('receiptSize')) {
+                    document.getElementById('receiptSize').value = s.receiptSize || 'medium';
+                }
+                if (document.getElementById('receiptColor')) {
+                    document.getElementById('receiptColor').value = s.receiptColor || '#6C63FF';
+                }
+                if (document.getElementById('receiptShowLogo')) {
+                    document.getElementById('receiptShowLogo').checked = s.receiptShowLogo !== false;
+                }
+                if (document.getElementById('receiptShowBarcode')) {
+                    document.getElementById('receiptShowBarcode').checked = s.receiptShowBarcode !== false;
+                }
+                if (document.getElementById('receiptShowQr')) {
+                    document.getElementById('receiptShowQr').checked = s.receiptShowQr || false;
+                }
+                
+                // Last backup
+                var lastBackup = localStorage.getItem('salimboy_last_backup');
+                if (lastBackup && document.getElementById('lastBackup')) {
+                    document.getElementById('lastBackup').textContent = lastBackup;
+                }
+            }
+        } catch(e) {
+            console.log('Sozlamalar yuklanmadi:', e);
+        }
+    }
+
+    // ===== NOTIFICATION =====
+    function showNotification(message, type) {
+        var notification = document.createElement('div');
+        notification.className = 'notification ' + (type || 'info');
+        notification.textContent = message;
+        notification.style.cssText = 'position:fixed;bottom:20px;right:20px;padding:12px 24px;border-radius:8px;color:white;z-index:9999;animation:slideIn 0.3s ease;';
+        
+        if (type === 'success') notification.style.background = '#28a745';
+        else if (type === 'error') notification.style.background = '#dc3545';
+        else if (type === 'warning') notification.style.background = '#ffc107';
+        else notification.style.background = '#6C63FF';
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(function() {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(function() {
+                notification.remove();
+            }, 300);
+        }, 3000);
+    }
+
+    // ===== DOM READY =====
+    document.addEventListener('DOMContentLoaded', function() {
+        // Current date
+        var dateEl = document.getElementById('currentDate');
+        if (dateEl) {
+            var now = new Date();
+            dateEl.textContent = now.toLocaleDateString('uz-UZ', {
+                year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
+            });
+        }
+        
+        // Sidebar toggle
+        var menuToggle = document.getElementById('menuToggle');
+        var sidebar = document.getElementById('sidebar');
+        if (menuToggle && sidebar) {
+            menuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('open');
+            });
+        }
+        
+        // Load settings
+        loadSettings();
+        
+        // Close modal on overlay click
+        var modal = document.getElementById('receiptPreviewModal');
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeReceiptPreview();
+                }
+            });
+        }
+        
+        console.log('✅ Settings.js yuklandi!');
+    });
+    </script>
+    
+    <!-- ===== STYLES ===== -->
+    <style>
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    
+    .color-options {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .color-options input[type="color"] {
+        width: 40px;
+        height: 40px;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        cursor: pointer;
+        padding: 2px;
+        background: white;
+    }
+    
+    .toggle-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .toggle-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    
+    .toggle-item input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--primary);
+        cursor: pointer;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 16px;
+    }
+    
+    .backup-info {
+        background: var(--bg-secondary);
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+    }
+    
+    .backup-info p {
+        margin: 6px 0;
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+    
+    .backup-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .btn-outline {
+        background: transparent;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .btn-outline:hover {
+        background: var(--primary);
+        color: white;
+    }
+    
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .btn-danger:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+    }
+    
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 9998;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .modal-overlay.active {
+        display: flex;
+    }
+    
+    .modal-content {
+        background: white;
+        border-radius: 16px;
+        max-width: 90%;
+        max-height: 90%;
+        overflow: auto;
+        animation: modalIn 0.3s ease;
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 24px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .modal-header h3 {
+        margin: 0;
+        font-size: 18px;
+        color: var(--text-primary);
+    }
+    
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #999;
+        transition: color 0.3s;
+    }
+    
+    .modal-close:hover {
+        color: #333;
+    }
+    
+    .modal-body {
+        padding: 24px;
+        display: flex;
+        justify-content: center;
+        background: #f5f5f5;
+    }
+    
+    @keyframes modalIn {
+        from {
+            transform: scale(0.8);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .backup-actions {
+            flex-direction: column;
+        }
+        
+        .modal-content {
+            max-width: 95%;
+        }
+    }
+    </style>
 </body>
 </html>
