@@ -1,0 +1,24 @@
+{
+  "name": "salimboy-sale",
+  "version": "1.0.0",
+  "description": "Salimboy Sale - Savdo boshqaruv tizimi",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lilloaded-77727/salimboy-sale.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/lilloaded-77727/salimboy-sale/issues"
+  },
+  "homepage": "https://github.com/lilloaded-77727/salimboy-sale#readme"
+}
